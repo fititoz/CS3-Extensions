@@ -1,0 +1,8 @@
+{
+    "name": "Fititoz CS3 Extensions",
+    "description": "Extensiones de CloudStream3 - Hentai y Anime en español",
+    "manifestVersion": 1,
+    "pluginLists": [
+        "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/plugins.json"
+    ]
+}
