@@ -1,0 +1,139 @@
+[
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=eshentai.tv&sz=%size%",
+        "fileHash": "sha256-9c613ac4acd6aadb9b08ccf6c99880e3bde9634eff0622102c0a3920927b470a",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/fititoz/CS3-Extensions",
+        "fileSize": 23053,
+        "status": 1,
+        "authors": [
+            "fititoz"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "EsHentaiTvProvider",
+        "description": "Hentai streaming and downloads from EsHentai.tv",
+        "url": "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/EsHentaiTvProvider.cs3",
+        "name": "EsHentaiTvProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=hentaijk.com&sz=%size%",
+        "fileHash": "sha256-0e9e3676df0ec2dacb4d3bfcb6129f287d11fc05ba9dd1f6b0bb7a5624ee574f",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/fititoz/CS3-Extensions",
+        "fileSize": 22479,
+        "status": 1,
+        "language": "es",
+        "authors": [
+            "fititoz"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "HentaijkProvider",
+        "description": "Hentai en espa\u00f1ol subtitulado en HD desde HentaiJK",
+        "url": "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/HentaijkProvider.cs3",
+        "name": "HentaijkProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=hentaila.com&sz=%size%",
+        "fileHash": "sha256-6c78d382614560007c4c57ea3df2226fe35d40c0622e20b3d96fdddd0ad034a6",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/fititoz/CS3-Extensions",
+        "fileSize": 15538,
+        "status": 1,
+        "language": "es",
+        "authors": [
+            "fititoz"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "HentailaProvider",
+        "description": "Hentai en espa\u00f1ol subtitulado en HD desde Hentaila",
+        "url": "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/HentailaProvider.cs3",
+        "name": "HentailaProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=hentaila.tv&sz=%size%",
+        "fileHash": "sha256-773a8e72233e7ac175d7f4eca11b2c8a1cdf8200fd2ba59596ae9ecea231d8f4",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/fititoz/CS3-Extensions",
+        "fileSize": 19296,
+        "status": 1,
+        "authors": [
+            "fititoz"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "HentailaTvProvider",
+        "description": "Hentai streaming and downloads from Hentaila.tv",
+        "url": "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/HentailaTvProvider.cs3",
+        "name": "HentailaTvProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=latinohentai.com&sz=%size%",
+        "fileHash": "sha256-31bf4d723a1b2cf1f222e3e4ae77889c4620e37f6baaeb8e09dd19ddec1e620c",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/fititoz/CS3-Extensions",
+        "fileSize": 12807,
+        "status": 1,
+        "authors": [
+            "fititoz"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "LatinoHentaiProvider",
+        "description": "Hentai streaming and downloads from LatinoHentai.com",
+        "url": "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/LatinoHentaiProvider.cs3",
+        "name": "LatinoHentaiProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=tiohentai.com&sz=%size%",
+        "fileHash": "sha256-ead8587f39113fc61b77c9ff7ae3b9ec0796b27cc878470b0448f0de9c235168",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/fititoz/CS3-Extensions",
+        "fileSize": 17416,
+        "status": 1,
+        "language": "es",
+        "authors": [
+            "fititoz"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "TioHentaiProvider",
+        "description": "Hentai en espa\u00f1ol subtitulado en HD desde TioHentai",
+        "url": "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/TioHentaiProvider.cs3",
+        "name": "TioHentaiProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=underhentai.net&sz=%size%",
+        "fileHash": "sha256-802b7f7c62d587e88cdf493bbdab16ffd68d163cce6c23810a04ed85d4c95087",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/fititoz/CS3-Extensions",
+        "fileSize": 15892,
+        "status": 1,
+        "language": "multi",
+        "authors": [
+            "fititoz"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "UnderHentaiProvider",
+        "description": "Hentai streaming and downloads from UnderHentai",
+        "url": "https://raw.githubusercontent.com/fititoz/CS3-Extensions/builds/UnderHentaiProvider.cs3",
+        "name": "UnderHentaiProvider"
+    }
+]
