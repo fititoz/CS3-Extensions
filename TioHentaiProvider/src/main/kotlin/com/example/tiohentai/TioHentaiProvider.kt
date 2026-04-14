@@ -130,11 +130,10 @@ class TioHentaiProvider : MainAPI() {
                     val epNum = epNumStr.trim().toIntOrNull() ?: return@forEach
                     val link = "$mainUrl/ver/$slug-$epNum"
                     episodes.add(
-                        Episode(
-                            data = link,
-                            name = "Episodio $epNum",
-                            episode = epNum
-                        )
+                        newEpisode(link) {
+                            this.name = "Episodio $epNum"
+                            this.episode = epNum
+                        }
                     )
                 }
             }
@@ -158,11 +157,11 @@ class TioHentaiProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
-        doc.select("script").apmap { script ->
+        doc.select("script").forEach { script ->
             val scriptData = script.data()
             if (scriptData.contains("var videos =")) {
                 val videosStr = scriptData.replace("\\/", "/")
-                fetchUrls(videosStr).toList().apmap { url ->
+                fetchUrls(videosStr).toList().forEach { url ->
                     loadExtractor(url, data, subtitleCallback, callback)
                 }
             }
