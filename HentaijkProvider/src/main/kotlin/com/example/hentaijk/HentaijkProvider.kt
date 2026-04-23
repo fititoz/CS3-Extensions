@@ -153,14 +153,14 @@ class HentaijkProvider : MainAPI() {
                             val streamUrl = iframeUrl.substringAfter("u=")
                             val fullUrl = "$mainUrl/$streamUrl"
                             callback(
-                                ExtractorLink(
+                                newExtractorLink(
                                     source = name,
                                     name = "Xtreme S",
                                     url = fullUrl,
-                                    referer = mainUrl,
-                                    quality = Qualities.Unknown.value,
-                                    isM3u8 = false
-                                )
+                                ) {
+                                    this.referer = mainUrl
+                                    this.quality = Qualities.Unknown.value
+                                }
                             )
                         }
                         "jkplayer/um" in iframeUrl -> {
@@ -172,14 +172,14 @@ class HentaijkProvider : MainAPI() {
                                         val videoUrl = Regex("""url:\s*'([^']+)'""").find(d)?.groupValues?.get(1)
                                         if (videoUrl != null) {
                                             callback(
-                                                ExtractorLink(
+                                                newExtractorLink(
                                                     source = name,
                                                     name = "Sabrosio",
                                                     url = videoUrl,
-                                                    referer = mainUrl,
-                                                    quality = Qualities.Unknown.value,
-                                                    isM3u8 = videoUrl.contains(".m3u8")
-                                                )
+                                                ) {
+                                                    this.referer = mainUrl
+                                                    this.quality = Qualities.Unknown.value
+                                                }
                                             )
                                         }
                                     }
