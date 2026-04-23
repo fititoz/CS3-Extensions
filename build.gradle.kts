@@ -39,7 +39,7 @@ subprojects {
     }
 
     android {
-        namespace = "com.example.tiohentai"
+        namespace = "com.example.${project.name.lowercase().replace("provider", "")}"
 
         defaultConfig {
             minSdk = 21
