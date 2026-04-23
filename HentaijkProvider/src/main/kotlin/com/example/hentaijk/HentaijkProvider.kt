@@ -15,13 +15,14 @@ class HentaijkProvider : MainAPI() {
     override val hasDownloadSupport = true
     override val supportedTypes = setOf(TvType.NSFW)
 
-    // --- Helper: Convert card Element to SearchResponse ---
+    // --- Helper: Convert search-result card (div.anime__item) to SearchResponse ---
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
         val anchor = this.selectFirst("a") ?: return null
         val href = fixUrl(anchor.attr("href"))
         val poster = this.selectFirst("div.anime__item__pic")?.attr("data-setbg")
-        val title = this.selectFirst("div.title")?.text()
-            ?: this.selectFirst("div#ainfo div.title")?.text()
+            ?: this.selectFirst("div[data-setbg]")?.attr("data-setbg")
+        val title = this.selectFirst("div.anime__item__text h5 a")?.text()
+            ?: this.selectFirst("h5")?.text()
             ?: anchor.attr("title")
             ?: return null
         return newAnimeSearchResponse(title, href) {
@@ -29,35 +30,95 @@ class HentaijkProvider : MainAPI() {
         }
     }
 
-    // --- MainPage: 2 sections ---
+    // --- Helper: Convert homepage card (div.card) to SearchResponse ---
+    private fun Element.toHomePageCard(): AnimeSearchResponse? {
+        val anchor = this.selectFirst("a[href]") ?: return null
+        val episodeUrl = fixUrl(anchor.attr("href"))
+        // Strip episode number from URL: /slug/3/ -> /slug/
+        val animeUrl = episodeUrl.trimEnd('/').substringBeforeLast("/") + "/"
+        val title = this.selectFirst("h5.card-title")?.text() ?: return null
+        val poster = this.selectFirst("img.card-img-top")?.attr("data-animepic")
+        return newAnimeSearchResponse(title, animeUrl) {
+            this.posterUrl = poster?.let { fixUrl(it) }
+        }
+    }
+
+    // --- Helper: Convert sidebar recent-series card to SearchResponse ---
+    private fun Element.toRecentCard(): AnimeSearchResponse? {
+        val anchor = this.selectFirst("h5.card-title a") ?: this.selectFirst("a[href]") ?: return null
+        val href = fixUrl(anchor.attr("href"))
+        val title = anchor.text().trim()
+        if (title.isEmpty()) return null
+        val poster = this.selectFirst("img")?.attr("src")
+        return newAnimeSearchResponse(title, href) {
+            this.posterUrl = poster?.let { fixUrl(it) }
+        }
+    }
+
+    // --- Helper: Convert top-anime card to SearchResponse ---
+    private fun Element.toTopCard(): AnimeSearchResponse? {
+        val anchor = this.selectFirst("a[href]") ?: return null
+        val href = fixUrl(anchor.attr("href"))
+        val title = this.selectFirst("h5.card-title")?.text()?.trim() ?: return null
+        val poster = this.selectFirst("div.card-img img")?.attr("src")
+            ?: this.selectFirst("img.card-img-top")?.attr("src")
+        return newAnimeSearchResponse(title, href) {
+            this.posterUrl = poster?.let { fixUrl(it) }
+        }
+    }
+
+    // --- MainPage: sections from homepage ---
     override val mainPage = mainPageOf(
-        "$mainUrl/directorio" to "Directorio",
-        "$mainUrl/top/" to "Top",
+        "$mainUrl/#animes" to "Últimos Episodios",
+        "$mainUrl/#ovas" to "OVAs & Especiales",
+        "$mainUrl/#recientes" to "Hentai Recientes",
+        "$mainUrl/#top" to "Top Animes",
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = if (request.data.contains("?")) {
-            "${request.data}&p=$page"
-        } else {
-            "${request.data}?p=$page"
-        }
+        // Homepage doesn't paginate, only show first page
+        if (page > 1) return newHomePageResponse(
+            list = HomePageList(name = request.name, list = emptyList()),
+            hasNext = false
+        )
 
+        val url = request.data.substringBefore("#")
         val doc = app.get(url).document
+        val fragment = request.data.substringAfter("#", "")
 
-        val home = doc.select("div.anime__item").mapNotNull { it.toSearchResponse() }
+        val home = when (fragment) {
+            "animes" -> {
+                doc.selectFirst("#animes")?.select("div.card")?.mapNotNull { it.toHomePageCard() } ?: emptyList()
+            }
+            "ovas" -> {
+                doc.selectFirst("#ovas")?.select("div.card")?.mapNotNull { it.toHomePageCard() } ?: emptyList()
+            }
+            "recientes" -> {
+                val container = doc.select("div.trending_div").firstOrNull {
+                    it.selectFirst("h4")?.text()?.contains("recientes", ignoreCase = true) == true
+                }
+                container?.select("div.p-3.d-flex")?.mapNotNull { it.toRecentCard() } ?: emptyList()
+            }
+            "top" -> {
+                doc.select("div.col.toplist div.card").mapNotNull { it.toTopCard() }
+            }
+            else -> {
+                doc.select("div.card").mapNotNull { it.toHomePageCard() }
+            }
+        }
 
         return newHomePageResponse(
             list = HomePageList(
                 name = request.name,
                 list = home
             ),
-            hasNext = doc.select("a[rel=next]").isNotEmpty()
+            hasNext = false
         )
     }
 
-    // --- Search: /buscar/{query} ---
+    // --- Search: /buscar?q={query} ---
     override suspend fun search(query: String): List<SearchResponse> {
-        val doc = app.get("$mainUrl/buscar/$query").document
+        val doc = app.get("$mainUrl/buscar?q=$query").document
         return doc.select("div.anime__item").mapNotNull { it.toSearchResponse() }
     }
 

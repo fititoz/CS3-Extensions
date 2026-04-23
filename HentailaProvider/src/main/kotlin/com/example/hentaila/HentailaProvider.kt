@@ -15,6 +15,8 @@ class HentailaProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.NSFW)
 
     override val mainPage = mainPageOf(
+        "$mainUrl/hub#episodes" to "Últimos Episodios",
+        "$mainUrl/hub#series" to "Series Recientes",
         "$mainUrl/catalogo" to "Catálogo",
         "$mainUrl/catalogo?genre=milfs" to "Milfs",
         "$mainUrl/catalogo?genre=romance" to "Romance",
@@ -32,6 +34,53 @@ class HentailaProvider : MainAPI() {
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val isHub = request.data.contains("/hub")
+
+        if (isHub) {
+            if (page > 1) return newHomePageResponse(
+                list = HomePageList(name = request.name, list = emptyList()),
+                hasNext = false
+            )
+
+            val url = request.data.substringBefore("#")
+            val doc = app.get(url).document
+            val sections = doc.select("section")
+
+            val home = if (request.data.contains("#episodes")) {
+                val section = sections.firstOrNull { it.selectFirst("h2")?.text()?.contains("Episodios") == true }
+                section?.select("article")?.mapNotNull { article ->
+                    val anchor = article.selectFirst("a[href]") ?: return@mapNotNull null
+                    val href = anchor.attr("href")
+                    val animeUrl = fixUrl(href.replace(Regex("/\\d+$"), ""))
+                    val title = article.selectFirst("header div")?.text()
+                        ?: article.selectFirst("header")?.text()
+                        ?: return@mapNotNull null
+                    val poster = article.selectFirst("img")?.attr("src")
+                    newAnimeSearchResponse(title, animeUrl) {
+                        this.posterUrl = poster?.let { fixUrl(it) }
+                    }
+                } ?: emptyList()
+            } else {
+                val section = sections.firstOrNull { it.selectFirst("h2")?.text()?.contains("Hentai") == true }
+                section?.select("article")?.mapNotNull { article ->
+                    val anchor = article.selectFirst("a[href*=/media/]") ?: return@mapNotNull null
+                    val href = fixUrl(anchor.attr("href"))
+                    val title = article.selectFirst("h3")?.text() ?: return@mapNotNull null
+                    val poster = article.selectFirst("img.aspect-poster")?.attr("src")
+                        ?: article.selectFirst("img")?.attr("src")
+                    newAnimeSearchResponse(title, href) {
+                        this.posterUrl = poster?.let { fixUrl(it) }
+                    }
+                } ?: emptyList()
+            }
+
+            return newHomePageResponse(
+                list = HomePageList(name = request.name, list = home),
+                hasNext = false
+            )
+        }
+
+        // Existing catalog logic
         val url = if (request.data.contains("?")) {
             "${request.data}&page=$page"
         } else {
