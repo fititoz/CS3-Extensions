@@ -141,6 +141,24 @@ class HentaijkProvider : MainAPI() {
         val slug = url.trimEnd('/').substringAfterLast("/")
         val episodes = ArrayList<Episode>()
 
+        // 1. Extract anime ID from data-anime attribute (used for AJAX calls)
+        val animeId = doc.selectFirst("div[data-anime]")?.attr("data-anime")
+
+        // 2. Extract total episode count from the metadata list
+        val epCountLabel = doc.select("li").find { it.text().contains("Episodios:", true) }
+        val totalEps = epCountLabel?.text()?.replace(Regex("[^0-9]"), "")?.toIntOrNull() ?: 0
+
+        if (totalEps > 0) {
+            for (i in 1..totalEps) {
+                episodes.add(
+                    newEpisode("$mainUrl/$slug/$i/") {
+                        this.name = "Episodio $i"
+                        this.episode = i
+                    }
+                )
+            }
+        }
+
         // Try to extract episodes from page links matching /{slug}/{number}
         val epRegex = Regex("""/$slug/(\d+)""")
         doc.select("a[href]").forEach { a ->
