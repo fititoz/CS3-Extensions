@@ -1,9 +1,8 @@
 version = 1
 
 cloudstream {
-    language = "es"
     description = "Hentai en español subtitulado en HD desde HentaiJK"
-    authors = listOf("User")
+    authors = listOf("fititoz")
 
     /**
      * Status int as the following:
