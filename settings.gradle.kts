@@ -3,5 +3,6 @@ rootProject.name = "CS3-Extensions"
 include(
     "TioHentaiProvider",
     "HentailaProvider",
-    "HentaijkProvider"
+    "HentaijkProvider",
+    "UnderHentaiProvider"
 )
