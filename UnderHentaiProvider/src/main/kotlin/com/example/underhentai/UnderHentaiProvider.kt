@@ -72,27 +72,29 @@ class UnderHentaiProvider : MainAPI() {
 
         // Strategy: find all watch links, extract ep number, 
         // read nearby text for language info
-        doc.select("a[href*='/watch/?']").forEach { a ->
-            val href = fixUrl(a.attr("href"))
-            val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull() ?: return@forEach
+        doc.select(".ep2-box").forEach { box ->
+            val epName = box.selectFirst(".ep2-header")?.text()?.trim() ?: "Episode"
             
-            // Try to find language context from parent/sibling elements
-            val parent = a.closest("tr, div, li") ?: a.parent()
-            val contextText = parent?.text() ?: ""
-            val langLabel = when {
-                contextText.contains("Spanish", ignoreCase = true) || contextText.contains("🇪🇸") -> "ES Sub"
-                contextText.contains("English", ignoreCase = true) || contextText.contains("🇺🇸") -> "EN Sub"
-                contextText.contains("Raw", ignoreCase = true) || contextText.contains("🇯🇵") -> "Raw"
-                else -> ""
-            }
-            
-            if (episodes.none { it.data == href }) {
-                episodes.add(
-                    newEpisode(href) {
-                        this.name = if (langLabel.isNotEmpty()) "Ep $epParam ($langLabel)" else "Episode $epParam"
-                        this.episode = epParam
-                    }
-                )
+            box.select(".ep2-card").forEach cardLoop@{ card ->
+                val streamAnchor = card.selectFirst("a.ep2-stream") ?: return@cardLoop
+                val href = fixUrl(streamAnchor.attr("href"))
+                val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull() ?: return@cardLoop
+                
+                val vtype = card.selectFirst(".ep2-vtype")?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
+                val subsNode = card.select(".ep2-meta-item").find { it.select(".ep2-meta-label").text().contains("Subs") }
+                val subs = subsNode?.selectFirst(".ep2-meta-value")?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
+                
+                val langLabel = if (subs.contains("None", true) || subs.isEmpty()) vtype else "$vtype - $subs"
+                val finalName = if (langLabel.isNotEmpty()) "$epName ($langLabel)" else epName
+                
+                if (episodes.none { it.data == href }) {
+                    episodes.add(
+                        newEpisode(href) {
+                            this.name = finalName
+                            this.episode = epParam
+                        }
+                    )
+                }
             }
         }
 
@@ -124,7 +126,7 @@ class UnderHentaiProvider : MainAPI() {
         doc.select("script").forEach { script ->
             val scriptData = script.data()
             if (scriptData.contains("iframe") || scriptData.contains("src=")) {
-                val iframeRegex = Regex("""(?:src|url)\s*[=:]\s*['"]([^'"]+)['"]""")
+                val iframeRegex = Regex("""(?:src|url)\s*[=:]\s*\\?['"]([^'"\\]+)\\?['"]""")
                 iframeRegex.findAll(scriptData).forEach { match ->
                     val url = match.groupValues[1]
                     if (url.startsWith("http") && !url.contains("underhentai.net")) {
