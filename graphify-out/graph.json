@@ -1,0 +1,739 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "build.gradle.kts",
+      "file_type": "code",
+      "source_file": "build.gradle.kts",
+      "source_location": "L1",
+      "id": "build_gradle_kts",
+      "community": 3,
+      "norm_label": "build.gradle.kts"
+    },
+    {
+      "label": "cloudstream()",
+      "file_type": "code",
+      "source_file": "build.gradle.kts",
+      "source_location": "L28",
+      "id": "build_gradle_cloudstream",
+      "community": 3,
+      "norm_label": "cloudstream()"
+    },
+    {
+      "label": "android()",
+      "file_type": "code",
+      "source_file": "build.gradle.kts",
+      "source_location": "L30",
+      "id": "build_gradle_android",
+      "community": 3,
+      "norm_label": "android()"
+    },
+    {
+      "label": "settings.gradle.kts",
+      "file_type": "code",
+      "source_file": "settings.gradle.kts",
+      "source_location": "L1",
+      "id": "settings_gradle_kts",
+      "community": 7,
+      "norm_label": "settings.gradle.kts"
+    },
+    {
+      "label": "build.gradle.kts",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\build.gradle.kts",
+      "source_location": "L1",
+      "id": "hentaijkprovider_build_gradle_kts",
+      "community": 8,
+      "norm_label": "build.gradle.kts"
+    },
+    {
+      "label": "HentaijkPlugin.kt",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkPlugin.kt",
+      "source_location": "L1",
+      "id": "hentaijkprovider_src_main_kotlin_com_example_hentaijk_hentaijkplugin_kt",
+      "community": 4,
+      "norm_label": "hentaijkplugin.kt"
+    },
+    {
+      "label": "HentaijkPlugin",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkPlugin.kt",
+      "source_location": "L6",
+      "id": "hentaijkplugin_hentaijkplugin",
+      "community": 4,
+      "norm_label": "hentaijkplugin"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkPlugin.kt",
+      "source_location": "L8",
+      "id": "hentaijkplugin_hentaijkplugin_load",
+      "community": 4,
+      "norm_label": ".load()"
+    },
+    {
+      "label": "HentaijkProvider.kt",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L1",
+      "id": "hentaijkprovider_src_main_kotlin_com_example_hentaijk_hentaijkprovider_kt",
+      "community": 0,
+      "norm_label": "hentaijkprovider.kt"
+    },
+    {
+      "label": "HentaijkProvider",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L8",
+      "id": "hentaijkprovider_hentaijkprovider",
+      "community": 0,
+      "norm_label": "hentaijkprovider"
+    },
+    {
+      "label": ".toSearchResponse()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L19",
+      "id": "hentaijkprovider_hentaijkprovider_tosearchresponse",
+      "community": 0,
+      "norm_label": ".tosearchresponse()"
+    },
+    {
+      "label": ".toHomePageCard()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L34",
+      "id": "hentaijkprovider_hentaijkprovider_tohomepagecard",
+      "community": 0,
+      "norm_label": ".tohomepagecard()"
+    },
+    {
+      "label": ".toRecentCard()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L47",
+      "id": "hentaijkprovider_hentaijkprovider_torecentcard",
+      "community": 0,
+      "norm_label": ".torecentcard()"
+    },
+    {
+      "label": ".toTopCard()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L59",
+      "id": "hentaijkprovider_hentaijkprovider_totopcard",
+      "community": 0,
+      "norm_label": ".totopcard()"
+    },
+    {
+      "label": ".getMainPage()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L78",
+      "id": "hentaijkprovider_hentaijkprovider_getmainpage",
+      "community": 0,
+      "norm_label": ".getmainpage()"
+    },
+    {
+      "label": ".search()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L120",
+      "id": "hentaijkprovider_hentaijkprovider_search",
+      "community": 0,
+      "norm_label": ".search()"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L126",
+      "id": "hentaijkprovider_hentaijkprovider_load",
+      "community": 0,
+      "norm_label": ".load()"
+    },
+    {
+      "label": ".loadLinks()",
+      "file_type": "code",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L196",
+      "id": "hentaijkprovider_hentaijkprovider_loadlinks",
+      "community": 0,
+      "norm_label": ".loadlinks()"
+    },
+    {
+      "label": "build.gradle.kts",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\build.gradle.kts",
+      "source_location": "L1",
+      "id": "hentailaprovider_build_gradle_kts",
+      "community": 9,
+      "norm_label": "build.gradle.kts"
+    },
+    {
+      "label": "HentailaPlugin.kt",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaPlugin.kt",
+      "source_location": "L1",
+      "id": "hentailaprovider_src_main_kotlin_com_example_hentaila_hentailaplugin_kt",
+      "community": 5,
+      "norm_label": "hentailaplugin.kt"
+    },
+    {
+      "label": "HentailaPlugin",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaPlugin.kt",
+      "source_location": "L6",
+      "id": "hentailaplugin_hentailaplugin",
+      "community": 5,
+      "norm_label": "hentailaplugin"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaPlugin.kt",
+      "source_location": "L8",
+      "id": "hentailaplugin_hentailaplugin_load",
+      "community": 5,
+      "norm_label": ".load()"
+    },
+    {
+      "label": "HentailaProvider.kt",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L1",
+      "id": "hentailaprovider_src_main_kotlin_com_example_hentaila_hentailaprovider_kt",
+      "community": 2,
+      "norm_label": "hentailaprovider.kt"
+    },
+    {
+      "label": "HentailaProvider",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L7",
+      "id": "hentailaprovider_hentailaprovider",
+      "community": 2,
+      "norm_label": "hentailaprovider"
+    },
+    {
+      "label": ".toSearchResponse()",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L26",
+      "id": "hentailaprovider_hentailaprovider_tosearchresponse",
+      "community": 2,
+      "norm_label": ".tosearchresponse()"
+    },
+    {
+      "label": ".getMainPage()",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L36",
+      "id": "hentailaprovider_hentailaprovider_getmainpage",
+      "community": 2,
+      "norm_label": ".getmainpage()"
+    },
+    {
+      "label": ".search()",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L103",
+      "id": "hentailaprovider_hentailaprovider_search",
+      "community": 2,
+      "norm_label": ".search()"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L108",
+      "id": "hentailaprovider_hentailaprovider_load",
+      "community": 2,
+      "norm_label": ".load()"
+    },
+    {
+      "label": ".loadLinks()",
+      "file_type": "code",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L162",
+      "id": "hentailaprovider_hentailaprovider_loadlinks",
+      "community": 2,
+      "norm_label": ".loadlinks()"
+    },
+    {
+      "label": "build.gradle.kts",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\build.gradle.kts",
+      "source_location": "L1",
+      "id": "tiohentaiprovider_build_gradle_kts",
+      "community": 10,
+      "norm_label": "build.gradle.kts"
+    },
+    {
+      "label": "TioHentaiPlugin.kt",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiPlugin.kt",
+      "source_location": "L1",
+      "id": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiplugin_kt",
+      "community": 6,
+      "norm_label": "tiohentaiplugin.kt"
+    },
+    {
+      "label": "TioHentaiPlugin",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiPlugin.kt",
+      "source_location": "L6",
+      "id": "tiohentaiplugin_tiohentaiplugin",
+      "community": 6,
+      "norm_label": "tiohentaiplugin"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiPlugin.kt",
+      "source_location": "L8",
+      "id": "tiohentaiplugin_tiohentaiplugin_load",
+      "community": 6,
+      "norm_label": ".load()"
+    },
+    {
+      "label": "TioHentaiProvider.kt",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L1",
+      "id": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiprovider_kt",
+      "community": 1,
+      "norm_label": "tiohentaiprovider.kt"
+    },
+    {
+      "label": "TioHentaiProvider",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L9",
+      "id": "tiohentaiprovider_tiohentaiprovider",
+      "community": 1,
+      "norm_label": "tiohentaiprovider"
+    },
+    {
+      "label": "SearchObject",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L20",
+      "id": "tiohentaiprovider_searchobject",
+      "community": 1,
+      "norm_label": "searchobject"
+    },
+    {
+      "label": ".toSearchResponse()",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L29",
+      "id": "tiohentaiprovider_tiohentaiprovider_tosearchresponse",
+      "community": 1,
+      "norm_label": ".tosearchresponse()"
+    },
+    {
+      "label": ".getMainPage()",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L47",
+      "id": "tiohentaiprovider_tiohentaiprovider_getmainpage",
+      "community": 1,
+      "norm_label": ".getmainpage()"
+    },
+    {
+      "label": ".search()",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L92",
+      "id": "tiohentaiprovider_tiohentaiprovider_search",
+      "community": 1,
+      "norm_label": ".search()"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L106",
+      "id": "tiohentaiprovider_tiohentaiprovider_load",
+      "community": 1,
+      "norm_label": ".load()"
+    },
+    {
+      "label": ".loadLinks()",
+      "file_type": "code",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L152",
+      "id": "tiohentaiprovider_tiohentaiprovider_loadlinks",
+      "community": 1,
+      "norm_label": ".loadlinks()"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "build.gradle.kts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_src": "build_gradle_kts",
+      "_tgt": "build_gradle_cloudstream",
+      "source": "build_gradle_kts",
+      "target": "build_gradle_cloudstream",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "build.gradle.kts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "build_gradle_kts",
+      "_tgt": "build_gradle_android",
+      "source": "build_gradle_kts",
+      "target": "build_gradle_android",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkPlugin.kt",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_src_main_kotlin_com_example_hentaijk_hentaijkplugin_kt",
+      "_tgt": "hentaijkplugin_hentaijkplugin",
+      "source": "hentaijkprovider_src_main_kotlin_com_example_hentaijk_hentaijkplugin_kt",
+      "target": "hentaijkplugin_hentaijkplugin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkPlugin.kt",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "hentaijkplugin_hentaijkplugin",
+      "_tgt": "hentaijkplugin_hentaijkplugin_load",
+      "source": "hentaijkplugin_hentaijkplugin",
+      "target": "hentaijkplugin_hentaijkplugin_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_src_main_kotlin_com_example_hentaijk_hentaijkprovider_kt",
+      "_tgt": "hentaijkprovider_hentaijkprovider",
+      "source": "hentaijkprovider_src_main_kotlin_com_example_hentaijk_hentaijkprovider_kt",
+      "target": "hentaijkprovider_hentaijkprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_tosearchresponse",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_tosearchresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_tohomepagecard",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_tohomepagecard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_torecentcard",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_torecentcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_totopcard",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_totopcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_getmainpage",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_getmainpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_search",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_search",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_load",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt",
+      "source_location": "L196",
+      "weight": 1.0,
+      "_src": "hentaijkprovider_hentaijkprovider",
+      "_tgt": "hentaijkprovider_hentaijkprovider_loadlinks",
+      "source": "hentaijkprovider_hentaijkprovider",
+      "target": "hentaijkprovider_hentaijkprovider_loadlinks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaPlugin.kt",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "hentailaprovider_src_main_kotlin_com_example_hentaila_hentailaplugin_kt",
+      "_tgt": "hentailaplugin_hentailaplugin",
+      "source": "hentailaprovider_src_main_kotlin_com_example_hentaila_hentailaplugin_kt",
+      "target": "hentailaplugin_hentailaplugin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaPlugin.kt",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "hentailaplugin_hentailaplugin",
+      "_tgt": "hentailaplugin_hentailaplugin_load",
+      "source": "hentailaplugin_hentailaplugin",
+      "target": "hentailaplugin_hentailaplugin_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "hentailaprovider_src_main_kotlin_com_example_hentaila_hentailaprovider_kt",
+      "_tgt": "hentailaprovider_hentailaprovider",
+      "source": "hentailaprovider_src_main_kotlin_com_example_hentaila_hentailaprovider_kt",
+      "target": "hentailaprovider_hentailaprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_src": "hentailaprovider_hentailaprovider",
+      "_tgt": "hentailaprovider_hentailaprovider_tosearchresponse",
+      "source": "hentailaprovider_hentailaprovider",
+      "target": "hentailaprovider_hentailaprovider_tosearchresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_src": "hentailaprovider_hentailaprovider",
+      "_tgt": "hentailaprovider_hentailaprovider_getmainpage",
+      "source": "hentailaprovider_hentailaprovider",
+      "target": "hentailaprovider_hentailaprovider_getmainpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L103",
+      "weight": 1.0,
+      "_src": "hentailaprovider_hentailaprovider",
+      "_tgt": "hentailaprovider_hentailaprovider_search",
+      "source": "hentailaprovider_hentailaprovider",
+      "target": "hentailaprovider_hentailaprovider_search",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_src": "hentailaprovider_hentailaprovider",
+      "_tgt": "hentailaprovider_hentailaprovider_load",
+      "source": "hentailaprovider_hentailaprovider",
+      "target": "hentailaprovider_hentailaprovider_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt",
+      "source_location": "L162",
+      "weight": 1.0,
+      "_src": "hentailaprovider_hentailaprovider",
+      "_tgt": "hentailaprovider_hentailaprovider_loadlinks",
+      "source": "hentailaprovider_hentailaprovider",
+      "target": "hentailaprovider_hentailaprovider_loadlinks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiPlugin.kt",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiplugin_kt",
+      "_tgt": "tiohentaiplugin_tiohentaiplugin",
+      "source": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiplugin_kt",
+      "target": "tiohentaiplugin_tiohentaiplugin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiPlugin.kt",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "tiohentaiplugin_tiohentaiplugin",
+      "_tgt": "tiohentaiplugin_tiohentaiplugin_load",
+      "source": "tiohentaiplugin_tiohentaiplugin",
+      "target": "tiohentaiplugin_tiohentaiplugin_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiprovider_kt",
+      "_tgt": "tiohentaiprovider_tiohentaiprovider",
+      "source": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiprovider_kt",
+      "target": "tiohentaiprovider_tiohentaiprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiprovider_kt",
+      "_tgt": "tiohentaiprovider_searchobject",
+      "source": "tiohentaiprovider_src_main_kotlin_com_example_tiohentai_tiohentaiprovider_kt",
+      "target": "tiohentaiprovider_searchobject",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_tiohentaiprovider",
+      "_tgt": "tiohentaiprovider_tiohentaiprovider_tosearchresponse",
+      "source": "tiohentaiprovider_tiohentaiprovider",
+      "target": "tiohentaiprovider_tiohentaiprovider_tosearchresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_tiohentaiprovider",
+      "_tgt": "tiohentaiprovider_tiohentaiprovider_getmainpage",
+      "source": "tiohentaiprovider_tiohentaiprovider",
+      "target": "tiohentaiprovider_tiohentaiprovider_getmainpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_tiohentaiprovider",
+      "_tgt": "tiohentaiprovider_tiohentaiprovider_search",
+      "source": "tiohentaiprovider_tiohentaiprovider",
+      "target": "tiohentaiprovider_tiohentaiprovider_search",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_tiohentaiprovider",
+      "_tgt": "tiohentaiprovider_tiohentaiprovider_load",
+      "source": "tiohentaiprovider_tiohentaiprovider",
+      "target": "tiohentaiprovider_tiohentaiprovider_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt",
+      "source_location": "L152",
+      "weight": 1.0,
+      "_src": "tiohentaiprovider_tiohentaiprovider",
+      "_tgt": "tiohentaiprovider_tiohentaiprovider_loadlinks",
+      "source": "tiohentaiprovider_tiohentaiprovider",
+      "target": "tiohentaiprovider_tiohentaiprovider_loadlinks",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

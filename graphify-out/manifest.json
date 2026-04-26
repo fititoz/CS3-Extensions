@@ -1,0 +1,13 @@
+{
+  "build.gradle.kts": 1776905713.903982,
+  "settings.gradle.kts": 1776906154.5145183,
+  "HentaijkProvider\\build.gradle.kts": 1776905927.6313317,
+  "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkPlugin.kt": 1776905929.3977146,
+  "HentaijkProvider\\src\\main\\kotlin\\com\\example\\hentaijk\\HentaijkProvider.kt": 1776912051.75411,
+  "HentailaProvider\\build.gradle.kts": 1776905889.1648874,
+  "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaPlugin.kt": 1776905890.422261,
+  "HentailaProvider\\src\\main\\kotlin\\com\\example\\hentaila\\HentailaProvider.kt": 1776911677.3272545,
+  "TioHentaiProvider\\build.gradle.kts": 1776209329.4840734,
+  "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiPlugin.kt": 1776210431.5549202,
+  "TioHentaiProvider\\src\\main\\kotlin\\com\\example\\tiohentai\\TioHentaiProvider.kt": 1776210519.4918764
+}

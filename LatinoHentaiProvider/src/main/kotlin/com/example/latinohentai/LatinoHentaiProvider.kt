@@ -22,7 +22,7 @@ class LatinoHentaiProvider : MainAPI() {
         val home = document.select("article").mapNotNull {
             it.toSearchResult()
         }
-        return newHomePageResponse(request.name, home)
+        return newHomePageResponse(HomePageList(request.name, home), hasNext = false)
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
@@ -30,7 +30,7 @@ class LatinoHentaiProvider : MainAPI() {
         val href = this.selectFirst("a")?.attr("href") ?: return null
         val posterUrl = this.selectFirst("img")?.attr("src")
 
-        return newAnimeSearchResponse(title, href, TvType.Anime) {
+        return newAnimeSearchResponse(title, href) {
             this.posterUrl = posterUrl
         }
     }
@@ -42,10 +42,10 @@ class LatinoHentaiProvider : MainAPI() {
         }
     }
 
-    override suspend fun load(url: String): LoadResponse? {
+    override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
 
-        val title = document.selectFirst("h1")?.text() ?: return null
+        val title = document.selectFirst("h1")?.text() ?: throw Exception("No title found")
         val poster = document.selectFirst("img")?.attr("src")
         val description = document.selectFirst("div.description")?.text()
 
@@ -53,10 +53,9 @@ class LatinoHentaiProvider : MainAPI() {
             val epHref = it.attr("href")
             val epTitle = it.text()
             if (epHref.contains("/episodio/")) {
-                Episode(
-                    data = epHref,
-                    name = epTitle
-                )
+                newEpisode(epHref) {
+                    this.name = epTitle
+                }
             } else null
         }
 
@@ -76,7 +75,7 @@ class LatinoHentaiProvider : MainAPI() {
         val document = app.get(data).document
         
         // Extract iframe or video links
-        document.select("iframe").forEach { iframe ->
+        for (iframe in document.select("iframe")) {
             val src = iframe.attr("src")
             if (src.isNotBlank()) {
                 loadExtractor(src, data, subtitleCallback, callback)
@@ -84,7 +83,7 @@ class LatinoHentaiProvider : MainAPI() {
         }
 
         // Dooplay admin-ajax.php
-        document.select("ul#playeroptionsul li").forEach { li ->
+        for (li in document.select("ul#playeroptionsul li")) {
             val post = li.attr("data-post")
             val nume = li.attr("data-nume")
             val type = li.attr("data-type")

@@ -113,7 +113,7 @@ class VeoHentaiProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
-        doc.select(".aspect-w-16.aspect-h-9 iframe").forEach { iframe ->
+        for (iframe in doc.select(".aspect-w-16.aspect-h-9 iframe")) {
             val src = iframe.attr("src")
             if (src.isNotEmpty()) {
                 loadExtractor(fixUrl(src), data, subtitleCallback, callback)
