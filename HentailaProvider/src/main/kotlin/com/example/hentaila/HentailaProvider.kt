@@ -12,7 +12,7 @@ class HentailaProvider : MainAPI() {
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
-    override val supportedTypes = setOf(TvType.NSFW)
+    override val supportedTypes = setOf(TvType.Anime)
 
     override val mainPage = mainPageOf(
         "$mainUrl/hub#episodes" to "Últimos Episodios",
@@ -151,7 +151,7 @@ class HentailaProvider : MainAPI() {
             }
         }
 
-        return newAnimeLoadResponse(title, url, TvType.NSFW) {
+        return newAnimeLoadResponse(title, url, TvType.Anime) {
             posterUrl = poster?.let { fixUrl(it) }
             addEpisodes(DubStatus.Subbed, episodes.sortedBy { it.episode })
             plot = description
