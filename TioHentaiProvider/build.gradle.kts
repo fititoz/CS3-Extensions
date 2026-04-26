@@ -1,6 +1,7 @@
 version = 1
 
 cloudstream {
+    language = "es"
     description = "Hentai en español subtitulado en HD desde TioHentai"
     authors = listOf("fititoz")
 

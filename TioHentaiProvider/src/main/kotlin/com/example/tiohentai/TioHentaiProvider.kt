@@ -10,6 +10,7 @@ class TioHentaiProvider : MainAPI() {
 
     override var mainUrl = "https://tiohentai.com"
     override var name = "TioHentai"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
