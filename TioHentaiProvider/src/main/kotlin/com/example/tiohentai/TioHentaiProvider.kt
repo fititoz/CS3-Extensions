@@ -14,7 +14,7 @@ class TioHentaiProvider : MainAPI() {
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
-    override val supportedTypes = setOf(TvType.NSFW)
+    override val supportedTypes = setOf(TvType.Anime)
 
     // --- Data classes for search API response ---
     data class SearchObject(
@@ -139,7 +139,7 @@ class TioHentaiProvider : MainAPI() {
             }
         }
 
-        return newAnimeLoadResponse(title, url, TvType.NSFW) {
+        return newAnimeLoadResponse(title, url, TvType.Anime) {
             posterUrl = poster?.let { fixUrl(it) }
             addEpisodes(DubStatus.Subbed, episodes.sortedBy { it.episode })
             showStatus = status
