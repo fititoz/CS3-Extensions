@@ -26,7 +26,7 @@ Características principales:
 
 ## 🚀 Cómo instalar en CloudStream
 
-> ⚠️ **IMPORTANTE:** Estas extensiones son de categoría **NSFW** (Adultos). Para poder verlas e instalarlas en CloudStream, debes ir a `Ajustes > General` y activar la opción **"Mostrar contenido NSFW"** (o "Show NSFW content").
+> ⚠️ **IMPORTANTE:** Estas extensiones están categorizadas como **Anime** para mejorar su visibilidad, pero contienen contenido para adultos. Ya no es necesario activar la opción "Mostrar contenido NSFW" en los ajustes de CloudStream para verlas.
 
 Puedes agregar todas estas extensiones a tu aplicación fácilmente siguiendo estos pasos:
 
