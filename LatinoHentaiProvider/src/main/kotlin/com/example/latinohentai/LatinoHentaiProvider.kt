@@ -63,7 +63,7 @@ class LatinoHentaiProvider : MainAPI() {
         return newAnimeLoadResponse(title, url, TvType.Anime) {
             this.posterUrl = poster
             this.plot = description
-            this.episodes = mapOf("Episodios" to episodes)
+            addEpisodes(DubStatus.Subbed, episodes)
         }
     }
 
