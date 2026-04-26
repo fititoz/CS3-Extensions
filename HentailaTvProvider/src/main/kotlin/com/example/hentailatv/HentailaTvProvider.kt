@@ -86,7 +86,7 @@ class HentailaTvProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
-        doc.select(".player_logic_item iframe").forEach { iframe ->
+        for (iframe in doc.select(".player_logic_item iframe")) {
             val url = iframe.attr("src")
             if (url.isNotBlank()) {
                 loadExtractor(fixUrl(url), data, subtitleCallback, callback)

@@ -66,7 +66,7 @@ class EsHentaiTvProvider : MainAPI() {
 
         val episodes = ArrayList<Episode>()
 
-        doc.select("ul.h-caps li a").forEach { a ->
+        for (a in doc.select("ul.h-caps li a")) {
             val href = a.attr("href")
             val epName = a.text().trim()
             val epNum = Regex("""\d+""").find(epName)?.value?.toIntOrNull()
@@ -98,11 +98,11 @@ class EsHentaiTvProvider : MainAPI() {
         val playContainer = doc.selectFirst("div#play-1")
         
         // Extract from script
-        doc.select("script").forEach { script ->
+        for (script in doc.select("script")) {
             val scriptData = script.data()
             // Look for base64 encoded URLs or raw URLs
             val base64Regex = Regex("""atob\(['"]([^'"]+)['"]\)""")
-            base64Regex.findAll(scriptData).forEach { match ->
+            for (match in base64Regex.findAll(scriptData)) {
                 try {
                     val decoded = String(Base64.getDecoder().decode(match.groupValues[1]))
                     if (decoded.startsWith("http")) {
@@ -114,7 +114,7 @@ class EsHentaiTvProvider : MainAPI() {
             }
             
             val urlRegex = Regex("""['"](https?://[^'"]+)['"]""")
-            urlRegex.findAll(scriptData).forEach { match ->
+            for (match in urlRegex.findAll(scriptData)) {
                 val url = match.groupValues[1]
                 if (url.contains("embed") || url.contains("video") || url.contains("player")) {
                     loadExtractor(url, data, subtitleCallback, callback)
@@ -123,10 +123,10 @@ class EsHentaiTvProvider : MainAPI() {
         }
 
         // Extract from onclick attributes
-        doc.select("[onclick]").forEach { element ->
+        for (element in doc.select("[onclick]")) {
             val onclick = element.attr("onclick")
             val base64Regex = Regex("""atob\(['"]([^'"]+)['"]\)""")
-            base64Regex.findAll(onclick).forEach { match ->
+            for (match in base64Regex.findAll(onclick)) {
                 try {
                     val decoded = String(Base64.getDecoder().decode(match.groupValues[1]))
                     if (decoded.startsWith("http")) {
@@ -138,7 +138,7 @@ class EsHentaiTvProvider : MainAPI() {
             }
             
             val urlRegex = Regex("""['"](https?://[^'"]+)['"]""")
-            urlRegex.findAll(onclick).forEach { match ->
+            for (match in urlRegex.findAll(onclick)) {
                 val url = match.groupValues[1]
                 if (url.contains("embed") || url.contains("video") || url.contains("player")) {
                     loadExtractor(url, data, subtitleCallback, callback)

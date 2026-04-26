@@ -86,7 +86,7 @@ class VeoHentaiProvider : MainAPI() {
             )
         } else {
             // It might be a series page, look for episodes
-            doc.select(".grid > a").forEach { a ->
+            for (a in doc.select(".grid > a")) {
                 val href = a.attr("href")
                 val epTitle = a.selectFirst("h2")?.text() ?: "Episodio"
                 episodes.add(

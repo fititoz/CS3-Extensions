@@ -36,3 +36,7 @@ In Kotlin, suspend functions cannot be called from within a forEach lambda. Use 
 - newAnimeSearchResponse takes title and url as primary arguments.
 - load method in MainAPI should return a non-nullable LoadResponse.
 - Use newEpisode(url) { ... } instead of the Episode constructor directly.
+## BasePlugin Refactoring
+- Refactored LatinoHentaiPlugin.kt and VeoHentaiPlugin.kt to use BasePlugin instead of Plugin.
+- Removed android.content.Context import and context parameter from load() function.
+- This aligns with the current library version and the pattern used in other plugins like TioHentaiPlugin.kt.
