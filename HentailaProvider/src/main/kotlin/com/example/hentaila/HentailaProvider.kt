@@ -8,6 +8,7 @@ class HentailaProvider : MainAPI() {
 
     override var mainUrl = "https://hentaila.com"
     override var name = "Hentaila"
+    override var lang = "es"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
