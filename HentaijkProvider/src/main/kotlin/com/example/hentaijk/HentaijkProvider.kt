@@ -206,9 +206,9 @@ class HentaijkProvider : MainAPI() {
 
             // Extract video[] iframe sources
             if (scriptData.contains("var video = [];")) {
-                val iframeRegex = Regex("""src="([^"]+)"""")
+                val iframeRegex = Regex("""src=\\?"([^"\\]+)\\?"""")
                 iframeRegex.findAll(scriptData).forEach { match ->
-                    val iframeUrl = match.groupValues[1]
+                    val iframeUrl = if (match.groupValues[1].startsWith("/")) fixUrl(match.groupValues[1]) else match.groupValues[1]
                     when {
                         "jkplayer/jk" in iframeUrl && "jkmedia" in iframeUrl -> {
                             val streamUrl = iframeUrl.substringAfter("u=")
@@ -224,13 +224,13 @@ class HentaijkProvider : MainAPI() {
                                 }
                             )
                         }
-                        "jkplayer/um" in iframeUrl -> {
+                        "jkplayer/um" in iframeUrl || "jkplayer/umv" in iframeUrl -> {
                             try {
                                 val iframeDoc = app.get(iframeUrl, referer = mainUrl).document
                                 iframeDoc.select("script").forEach { s ->
                                     val d = s.data()
-                                    if (d.contains("url:") || d.contains("var parts = {")) {
-                                        val videoUrl = Regex("""url:\s*'([^']+)'""").find(d)?.groupValues?.get(1)
+                                    if (d.contains("url:") || d.contains("var parts = {") || d.contains("player.setup")) {
+                                        val videoUrl = Regex("""url:\s*\\?['"]([^'"\\]+)\\?['"]""").find(d)?.groupValues?.get(1)
                                         if (videoUrl != null) {
                                             callback(
                                                 newExtractorLink(
