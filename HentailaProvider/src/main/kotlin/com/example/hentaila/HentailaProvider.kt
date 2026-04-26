@@ -170,7 +170,7 @@ class HentailaProvider : MainAPI() {
         doc.select("script").forEach { script ->
             val scriptData = script.data()
             if (scriptData.contains("embeds") || scriptData.contains("url")) {
-                val embedRegex = Regex(""""url"\s*:\s*"(https?://[^"]+)"""")
+                val embedRegex = Regex(""""?url"?\s*:\s*"(https?://[^"]+)"""")
                 embedRegex.findAll(scriptData).forEach { match ->
                     val url = match.groupValues[1].replace("\\/", "/")
                     loadExtractor(url, data, subtitleCallback, callback)
