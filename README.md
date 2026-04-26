@@ -15,6 +15,7 @@ Actualmente este repositorio incluye los siguientes Providers:
 - **TioHentai** (`TioHentaiProvider`) - [tiohentai.com](https://tiohentai.com)
 - **HentaiLa** (`HentailaProvider`) - [hentaila.com](https://hentaila.com)
 - **HentaiJK** (`HentaijkProvider`) - [hentaijk.com](https://hentaijk.com)
+- **UnderHentai** (`UnderHentaiProvider`) - [underhentai.net](https://www.underhentai.net)
 
 Características principales:
 - ✅ Catálogo de series y ovas
