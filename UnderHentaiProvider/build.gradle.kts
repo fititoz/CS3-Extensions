@@ -1,9 +1,8 @@
 version = 1
 
 cloudstream {
-    language = "es"
     description = "Hentai streaming and downloads from UnderHentai"
-    authors = listOf("User")
+    authors = listOf("fititoz")
 
     /**
      * Status int as the following:
