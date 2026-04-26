@@ -126,7 +126,7 @@ class HentaijkProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
 
-        val title = doc.selectFirst("h3")?.text() ?: ""
+        val title = doc.selectFirst("div.anime_info h3")?.text() ?: ""
         val poster = doc.selectFirst("div[data-setbg]")?.attr("data-setbg")
             ?: doc.selectFirst("div.anime__details__pic")?.attr("data-setbg")
         val description = doc.selectFirst("p.tab.sinopsis")?.text()
