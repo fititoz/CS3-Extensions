@@ -8,7 +8,7 @@ class UnderHentaiProvider : MainAPI() {
 
     override var mainUrl = "https://www.underhentai.net"
     override var name = "UnderHentai"
-    override var lang = "es-MX"
+    override var lang = "multi"
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true

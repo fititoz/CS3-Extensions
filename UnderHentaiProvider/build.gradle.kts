@@ -1,7 +1,7 @@
 version = 1
 
 cloudstream {
-    language = "es-MX"
+    language = "multi"
     description = "Hentai streaming and downloads from UnderHentai"
     authors = listOf("fititoz")
 
