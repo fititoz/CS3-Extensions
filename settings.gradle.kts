@@ -4,5 +4,9 @@ include(
     "TioHentaiProvider",
     "HentailaProvider",
     "HentaijkProvider",
-    "UnderHentaiProvider"
+    "UnderHentaiProvider",
+    "HentailaTvProvider",
+    "VeoHentaiProvider",
+    "EsHentaiTvProvider",
+    "LatinoHentaiProvider"
 )
