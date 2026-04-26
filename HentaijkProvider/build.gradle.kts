@@ -15,7 +15,7 @@ cloudstream {
     status = 1
 
     tvTypes = listOf(
-        "NSFW"
+        "Anime"
     )
 
     iconUrl = "https://www.google.com/s2/favicons?domain=hentaijk.com&sz=%size%"

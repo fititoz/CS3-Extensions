@@ -13,7 +13,7 @@ class HentaijkProvider : MainAPI() {
     override val hasMainPage = true
     override val hasChromecastSupport = true
     override val hasDownloadSupport = true
-    override val supportedTypes = setOf(TvType.NSFW)
+    override val supportedTypes = setOf(TvType.Anime)
 
     // --- Helper: Convert search-result card (div.anime__item) to SearchResponse ---
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
@@ -183,7 +183,7 @@ class HentaijkProvider : MainAPI() {
             }
         }
 
-        return newAnimeLoadResponse(title, url, TvType.NSFW) {
+        return newAnimeLoadResponse(title, url, TvType.Anime) {
             posterUrl = poster?.let { fixUrl(it) }
             addEpisodes(DubStatus.Subbed, episodes.sortedBy { it.episode })
             showStatus = status
