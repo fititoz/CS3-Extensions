@@ -66,36 +66,16 @@ class VeoHentaiProvider : MainAPI() {
         val doc = app.get(url).document
 
         val title = doc.selectFirst("h1")?.text() ?: ""
-        val poster = doc.selectFirst("figure img")?.let {
-            it.attr("data-src").takeIf { src -> src.isNotEmpty() } ?: it.attr("src")
-        }
+        val poster = doc.selectFirst("figure img")?.attr("src")
         val description = doc.selectFirst(".entry-content p")?.text()
         val genres = doc.select("a[href*=/genero/]").map { it.text().trim() }
 
-        val episodes = ArrayList<Episode>()
-
-        // Check if it's a watch page directly or a series page
-        val iframe = doc.selectFirst(".aspect-w-16.aspect-h-9 iframe")
-        if (iframe != null) {
-            // It's a watch page
-            episodes.add(
-                newEpisode(url) {
-                    this.name = title
-                    this.episode = 1
-                }
-            )
-        } else {
-            // It might be a series page, look for episodes
-            for (a in doc.select(".grid > a")) {
-                val href = a.attr("href")
-                val epTitle = a.selectFirst("h2")?.text() ?: "Episodio"
-                episodes.add(
-                    newEpisode(fixUrl(href)) {
-                        this.name = epTitle
-                    }
-                )
+        val episodes = listOf(
+            newEpisode(url) {
+                this.name = title
+                this.episode = 1
             }
-        }
+        )
 
         return newAnimeLoadResponse(title, url, TvType.Anime) {
             posterUrl = poster?.let { fixUrl(it) }
@@ -113,13 +93,21 @@ class VeoHentaiProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
-        for (iframe in doc.select(".aspect-w-16.aspect-h-9 iframe")) {
+        // Check regular iframes
+        for (iframe in doc.select("iframe")) {
             val src = iframe.attr("src")
-            if (src.isNotEmpty()) {
+            if (src.isNotBlank() && !src.contains("youtube")) {
                 loadExtractor(fixUrl(src), data, subtitleCallback, callback)
             }
         }
 
+        // Sometimes the iframe is lazy loaded in a script or data attribute
+        for (iframe in doc.select("iframe[data-src]")) {
+            val src = iframe.attr("data-src")
+            if (src.isNotBlank() && !src.contains("youtube")) {
+                loadExtractor(fixUrl(src), data, subtitleCallback, callback)
+            }
+        }
         return true
     }
 }

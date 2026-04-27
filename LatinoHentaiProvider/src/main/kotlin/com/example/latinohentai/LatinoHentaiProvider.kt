@@ -14,7 +14,7 @@ class LatinoHentaiProvider : MainAPI() {
 
     override val mainPage = mainPageOf(
         "$mainUrl/episodios/page/" to "Episodios",
-        "$mainUrl/hentai/page/" to "Hentai",
+        "$mainUrl/hentai/page/" to "Series Hentai",
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -26,8 +26,8 @@ class LatinoHentaiProvider : MainAPI() {
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val title = this.selectFirst("h3")?.text() ?: return null
-        val href = this.selectFirst("a")?.attr("href") ?: return null
+        val title = this.selectFirst("h3 a")?.text() ?: this.selectFirst("img")?.attr("alt") ?: return null
+        val href = this.selectFirst("h3 a")?.attr("href") ?: this.selectFirst("a")?.attr("href") ?: return null
         val posterUrl = this.selectFirst("img")?.attr("src")
 
         return newAnimeSearchResponse(title, href) {

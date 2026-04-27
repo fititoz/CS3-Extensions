@@ -23,10 +23,10 @@ class EsHentaiTvProvider : MainAPI() {
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
-        val anchor = this.selectFirst("a") ?: return null
-        val title = this.selectFirst("h3.title")?.text() ?: return null
+        val anchor = this.selectFirst("a.preview") ?: this.selectFirst("a") ?: return null
+        val title = this.selectFirst("h2.h-title")?.text() ?: this.selectFirst("h3.title")?.text() ?: return null
         val href = fixUrl(anchor.attr("href"))
-        val poster = this.selectFirst("figure img")?.attr("src")
+        val poster = this.selectFirst("img")?.attr("src")
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
         }
@@ -40,7 +40,7 @@ class EsHentaiTvProvider : MainAPI() {
         }
 
         val doc = app.get(url).document
-        val home = doc.select("article.serie").mapNotNull { it.toSearchResponse() }
+        val home = doc.select(".col-6 > a.preview, article.serie").mapNotNull { it.toSearchResponse() }
 
         return newHomePageResponse(
             list = HomePageList(
@@ -53,7 +53,7 @@ class EsHentaiTvProvider : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         val doc = app.get("$mainUrl/?s=$query").document
-        return doc.select("article.serie").mapNotNull { it.toSearchResponse() }
+        return doc.select(".col-6 > a.preview, article.serie").mapNotNull { it.toSearchResponse() }
     }
 
     override suspend fun load(url: String): LoadResponse {

@@ -15,6 +15,7 @@ class HentailaTvProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.Anime)
 
     override val mainPage = mainPageOf(
+        "$mainUrl/episodios" to "Recientes",
         "$mainUrl/directorio" to "Directorio"
     )
 
@@ -22,17 +23,17 @@ class HentailaTvProvider : MainAPI() {
         val anchor = this.selectFirst("a.card__cover") ?: return null
         val title = this.selectFirst(".card__title")?.text() ?: return null
         val href = fixUrl(anchor.attr("href"))
-        val poster = this.selectFirst("a.card__cover img")?.attr("src")
+        val poster = this.selectFirst("img")?.attr("src")
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
         }
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = if (request.data.contains("?")) {
-            "${request.data}&page=$page"
+        val url = if (page <= 1) {
+            request.data
         } else {
-            "${request.data}?page=$page"
+            "${request.data}/page/$page"
         }
 
         val doc = app.get(url).document
