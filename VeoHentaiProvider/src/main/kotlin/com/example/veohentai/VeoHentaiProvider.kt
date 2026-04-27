@@ -2,7 +2,6 @@ package com.example.veohentai
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
-import android.util.Base64
 import org.jsoup.nodes.Element
 
 class VeoHentaiProvider : MainAPI() {
@@ -102,7 +101,7 @@ class VeoHentaiProvider : MainAPI() {
                 val iframeDoc = app.get(src).document
                 val dataId = iframeDoc.selectFirst("li[data-id]")?.attr("data-id") ?: continue
                 val vidParam = Regex("""vid=([^&]+)""").find(dataId)?.groupValues?.get(1) ?: continue
-                val decoded = String(Base64.decode(vidParam, Base64.DEFAULT))
+                val decoded = String(android.util.Base64.decode(vidParam, android.util.Base64.DEFAULT))
                 val mp4Url = decoded.split("|").firstOrNull() ?: continue
                 if (mp4Url.startsWith("http")) {
                     callback(
@@ -110,10 +109,11 @@ class VeoHentaiProvider : MainAPI() {
                             name,
                             "HentaiPlayer",
                             mp4Url,
-                            referer = src,
-                            quality = Qualities.Unknown.value,
-                            isM3u8 = mp4Url.contains(".m3u8")
-                        )
+                        ) {
+                            this.referer = src
+                            this.quality = Qualities.Unknown.value
+                            this.isM3u8 = mp4Url.contains(".m3u8")
+                        }
                     )
                 }
                 continue
