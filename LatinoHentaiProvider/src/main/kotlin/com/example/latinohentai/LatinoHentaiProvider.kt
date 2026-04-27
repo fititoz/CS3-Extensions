@@ -28,12 +28,13 @@ class LatinoHentaiProvider : MainAPI() {
         val home = if (isFragment) {
             if (page > 1) return newHomePageResponse(HomePageList(request.name, emptyList()), hasNext = false)
             val fragment = request.data.substringAfter("#")
-            when (fragment) {
-                "estrenos" -> document.select("#featured-titles article").mapNotNull { it.toSearchResult() }
-                "ultimos" -> document.select(".items.full article").mapNotNull { it.toSearchResult() }
-                "recomendaciones" -> document.select(".dtw_content article").mapNotNull { it.toSearchResult() }
-                else -> document.select("article.item").mapNotNull { it.toSearchResult() }
+            val items = when (fragment) {
+                "estrenos" -> document.select("#featured-titles article")
+                "ultimos" -> document.select(".items.full article")
+                "recomendaciones" -> document.select(".dtw_content article")
+                else -> document.select("article.item")
             }
+            items.mapNotNull { it.toSearchResult() }
         } else {
             document.select("article.item, article").mapNotNull { it.toSearchResult() }
         }

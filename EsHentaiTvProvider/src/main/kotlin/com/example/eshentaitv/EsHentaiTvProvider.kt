@@ -16,17 +16,14 @@ class EsHentaiTvProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.Anime)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/emision" to "En Emisión",
-        "$mainUrl/series" to "Series",
-        "$mainUrl/ovas" to "OVAs",
-        "$mainUrl/peliculas" to "Películas"
+        "$mainUrl/page/" to "Inicio",
+        "$mainUrl/hentai/page/" to "Hentai"
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
-        val anchor = this.selectFirst("a") ?: return null
-        val title = this.selectFirst("h2")?.text() ?: this.selectFirst("h3.title")?.text() ?: anchor.attr("title") ?: return null
-        val href = fixUrl(anchor.attr("href"))
-        val poster = this.selectFirst("img")?.attr("src")
+        val title = this.selectFirst("h2.h-title")?.text() ?: this.selectFirst("h3.title")?.text() ?: return null
+        val href = fixUrl(this.selectFirst("a")?.attr("href") ?: return null)
+        val poster = this.selectFirst("img")?.let { it.attr("data-src").ifEmpty { it.attr("src") } }
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
         }
@@ -40,7 +37,7 @@ class EsHentaiTvProvider : MainAPI() {
         }
 
         val doc = app.get(url).document
-        val home = doc.select(".list-unstyled li, article.serie").mapNotNull { it.toSearchResponse() }
+        val home = doc.select(".list-unstyled li a.preview, article.serie").mapNotNull { it.toSearchResponse() }
 
         return newHomePageResponse(
             list = HomePageList(

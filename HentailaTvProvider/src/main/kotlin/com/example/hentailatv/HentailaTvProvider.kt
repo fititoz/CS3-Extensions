@@ -16,13 +16,13 @@ class HentailaTvProvider : MainAPI() {
 
     override val mainPage = mainPageOf(
         "$mainUrl/episodios/page/" to "Episodios",
-        "$mainUrl/hentai/page/" to "Hentai"
+        "$mainUrl/hentai/page/" to "Series Hentai"
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
-        val title = this.selectFirst("h3 a")?.text() ?: this.selectFirst("img")?.attr("alt") ?: return null
-        val href = this.selectFirst("h3 a")?.attr("href") ?: this.selectFirst("a")?.attr("href") ?: return null
-        val poster = this.selectFirst("img")?.let { it.attr("src").ifEmpty { it.attr("data-src") } }
+        val title = this.selectFirst("h3 a")?.text() ?: this.selectFirst("h3")?.text() ?: return null
+        val href = fixUrl(this.selectFirst("a")?.attr("href") ?: return null)
+        val poster = this.selectFirst("img")?.attr("src")
 
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }

@@ -2,6 +2,7 @@ package com.example.veohentai
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import android.util.Base64
 import org.jsoup.nodes.Element
 
 class VeoHentaiProvider : MainAPI() {
@@ -97,6 +98,26 @@ class VeoHentaiProvider : MainAPI() {
         // Check for iframes directly inside .aspect-w-16.aspect-h-9 or similar
         for (iframe in doc.select("iframe, .aspect-w-16 iframe")) {
             val src = iframe.attr("src").ifEmpty { iframe.attr("data-src") }
+            if (src.contains("hentaiplayer.com")) {
+                val iframeDoc = app.get(src).document
+                val dataId = iframeDoc.selectFirst("li[data-id]")?.attr("data-id") ?: continue
+                val vidParam = Regex("""vid=([^&]+)""").find(dataId)?.groupValues?.get(1) ?: continue
+                val decoded = String(Base64.decode(vidParam, Base64.DEFAULT))
+                val mp4Url = decoded.split("|").firstOrNull() ?: continue
+                if (mp4Url.startsWith("http")) {
+                    callback(
+                        newExtractorLink(
+                            name,
+                            "HentaiPlayer",
+                            mp4Url,
+                            referer = src,
+                            quality = Qualities.Unknown.value,
+                            isM3u8 = mp4Url.contains(".m3u8")
+                        )
+                    )
+                }
+                continue
+            }
             if (src.isNotBlank() && !src.contains("youtube")) {
                 loadExtractor(fixUrl(src), data, subtitleCallback, callback)
             }
