@@ -106,14 +106,13 @@ class VeoHentaiProvider : MainAPI() {
                 if (mp4Url.startsWith("http")) {
                     callback(
                         newExtractorLink(
-                            name,
-                            "HentaiPlayer",
-                            mp4Url,
-                        ) {
-                            this.referer = src
-                            this.quality = Qualities.Unknown.value
-                            this.isM3u8 = mp4Url.contains(".m3u8")
-                        }
+                            source = name,
+                            name = "HentaiPlayer",
+                            url = mp4Url,
+                            referer = src,
+                            quality = Qualities.Unknown.value,
+                            isM3u8 = mp4Url.contains(".m3u8")
+                        )
                     )
                 }
                 continue
