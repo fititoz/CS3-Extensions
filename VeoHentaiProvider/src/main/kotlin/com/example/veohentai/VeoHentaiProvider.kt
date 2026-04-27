@@ -2,6 +2,7 @@ package com.example.veohentai
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.nodes.Element
 
 class VeoHentaiProvider : MainAPI() {
@@ -106,12 +107,12 @@ class VeoHentaiProvider : MainAPI() {
                 if (mp4Url.startsWith("http")) {
                     callback(
                         newExtractorLink(
-                            source = name,
-                            name = "HentaiPlayer",
-                            url = mp4Url,
-                            referer = src,
-                            quality = Qualities.Unknown.value,
-                            isM3u8 = mp4Url.contains(".m3u8")
+                            name,
+                            "HentaiPlayer",
+                            mp4Url,
+                            src,
+                            Qualities.Unknown.value,
+                            mp4Url.contains(".m3u8")
                         )
                     )
                 }
