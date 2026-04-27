@@ -27,7 +27,7 @@ class VeoHentaiProvider : MainAPI() {
         val href = fixUrl(this.attr("href"))
         val title = this.selectFirst("h2")?.text() ?: return null
         val poster = this.selectFirst("figure img")?.let {
-            it.attr("data-src").takeIf { src -> src.isNotEmpty() } ?: it.attr("src")
+            it.attr("src").ifEmpty { it.attr("data-src") }
         }
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
@@ -93,19 +93,24 @@ class VeoHentaiProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
-        // Check regular iframes
-        for (iframe in doc.select("iframe")) {
-            val src = iframe.attr("src")
+        // Veohentai uses multiple servers in the player section
+        // Check for iframes directly inside .aspect-w-16.aspect-h-9 or similar
+        for (iframe in doc.select("iframe, .aspect-w-16 iframe")) {
+            val src = iframe.attr("src").ifEmpty { iframe.attr("data-src") }
             if (src.isNotBlank() && !src.contains("youtube")) {
                 loadExtractor(fixUrl(src), data, subtitleCallback, callback)
             }
         }
 
-        // Sometimes the iframe is lazy loaded in a script or data attribute
-        for (iframe in doc.select("iframe[data-src]")) {
-            val src = iframe.attr("data-src")
-            if (src.isNotBlank() && !src.contains("youtube")) {
-                loadExtractor(fixUrl(src), data, subtitleCallback, callback)
+        // Check for scripts holding video links (common in WordPress)
+        for (script in doc.select("script")) {
+            val dataContent = script.data()
+            if (dataContent.contains("iframe") || dataContent.contains("src=")) {
+                val iframeRegex = Regex("""src=\\?['"](https?://[^'"\\]+)\\?['"]""")
+                for (match in iframeRegex.findAll(dataContent)) {
+                    val url = match.groupValues[1]
+                    loadExtractor(url, data, subtitleCallback, callback)
+                }
             }
         }
         return true

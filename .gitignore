@@ -3,6 +3,7 @@ build/
 .gradle/
 *.apk
 *.cs3
+boulder.json
 
 # IDE
 .idea/
@@ -13,3 +14,8 @@ local.properties
 .DS_Store
 Thumbs.db
 nul
+
+#carpetas
+graphify-out/
+.sisyphus/
+.opencode/

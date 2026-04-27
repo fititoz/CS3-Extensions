@@ -13,16 +13,32 @@ class LatinoHentaiProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.Anime)
 
     override val mainPage = mainPageOf(
+        "$mainUrl/#estrenos" to "Próximos Estrenos",
+        "$mainUrl/#ultimos" to "Últimos Hentai Agregados",
+        "$mainUrl/#recomendaciones" to "Recomendaciones del Día",
         "$mainUrl/episodios/page/" to "Episodios",
-        "$mainUrl/hentai/page/" to "Series Hentai",
+        "$mainUrl/hentai/page/" to "Series Hentai"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val document = app.get(request.data + page).document
-        val home = document.select("article").mapNotNull {
-            it.toSearchResult()
+        val isFragment = request.data.contains("#")
+        val url = if (isFragment) request.data.substringBefore("#") else request.data + page
+        val document = app.get(url).document
+
+        val home = if (isFragment) {
+            if (page > 1) return newHomePageResponse(HomePageList(request.name, emptyList()), hasNext = false)
+            val fragment = request.data.substringAfter("#")
+            when (fragment) {
+                "estrenos" -> document.select("#featured-titles article").mapNotNull { it.toSearchResult() }
+                "ultimos" -> document.select(".items.full article").mapNotNull { it.toSearchResult() }
+                "recomendaciones" -> document.select(".dtw_content article").mapNotNull { it.toSearchResult() }
+                else -> document.select("article.item").mapNotNull { it.toSearchResult() }
+            }
+        } else {
+            document.select("article.item, article").mapNotNull { it.toSearchResult() }
         }
-        return newHomePageResponse(HomePageList(request.name, home), hasNext = false)
+        
+        return newHomePageResponse(HomePageList(request.name, home), hasNext = !isFragment && home.isNotEmpty())
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
