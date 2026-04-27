@@ -16,8 +16,7 @@ class EsHentaiTvProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.Anime)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/page/" to "Inicio",
-        "$mainUrl/hentai/page/" to "Hentai"
+        "$mainUrl/" to "Últimos Agregados"
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
@@ -30,20 +29,13 @@ class EsHentaiTvProvider : MainAPI() {
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = if (page == 1) {
-            request.data
-        } else {
-            "${request.data}/page/$page"
-        }
+        val url = if (page == 1) mainUrl else "$mainUrl/page/$page/"
 
         val doc = app.get(url).document
         val home = doc.select(".list-unstyled li a.preview, article.serie").mapNotNull { it.toSearchResponse() }
 
         return newHomePageResponse(
-            list = HomePageList(
-                name = request.name,
-                list = home
-            ),
+            list = HomePageList(request.name, home),
             hasNext = home.isNotEmpty()
         )
     }

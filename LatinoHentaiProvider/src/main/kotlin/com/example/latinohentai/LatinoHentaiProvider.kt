@@ -30,7 +30,7 @@ class LatinoHentaiProvider : MainAPI() {
             val fragment = request.data.substringAfter("#")
             val items = when (fragment) {
                 "estrenos" -> document.select("#featured-titles article")
-                "ultimos" -> document.select(".items.full article")
+                "ultimos" -> document.select(".items.full article:not(.w_item_a)")
                 "recomendaciones" -> document.select(".dtw_content article")
                 else -> document.select("article.item")
             }
@@ -43,8 +43,15 @@ class LatinoHentaiProvider : MainAPI() {
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val title = this.selectFirst("h3 a")?.text() ?: this.selectFirst("img")?.attr("alt") ?: return null
-        val href = this.selectFirst("h3 a")?.attr("href") ?: this.selectFirst("a")?.attr("href") ?: return null
+        val title = this.selectFirst("h3 a")?.text() 
+            ?: this.selectFirst("span.title")?.text() 
+            ?: this.selectFirst("img")?.attr("alt") 
+            ?: return null
+            
+        val href = this.selectFirst("h3 a")?.attr("href") 
+            ?: this.selectFirst("a")?.attr("href") 
+            ?: return null
+            
         val posterUrl = this.selectFirst("img")?.attr("src")
 
         return newAnimeSearchResponse(title, href) {
