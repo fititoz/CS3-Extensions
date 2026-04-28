@@ -6,7 +6,6 @@ include(
     "HentaijkProvider",
     "UnderHentaiProvider",
     "HentailaTvProvider",
-    "VeoHentaiProvider",
     "EsHentaiTvProvider",
     "LatinoHentaiProvider"
 )

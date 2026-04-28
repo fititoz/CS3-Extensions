@@ -17,7 +17,6 @@ Actualmente este repositorio incluye los siguientes Providers:
 - **HentaiJK** (`HentaijkProvider`) - [hentaijk.com](https://hentaijk.com)
 - **UnderHentai** (`UnderHentaiProvider`) - [underhentai.net](https://www.underhentai.net)
 - **Hentaila.tv** (`HentailaTvProvider`) - [hentaila.tv](https://hentaila.tv/)
-- **VeoHentai** (`VeoHentaiProvider`) - [veohentai.com](https://veohentai.com/)
 - **EsHentai.tv** (`EsHentaiTvProvider`) - [eshentai.tv](https://eshentai.tv/)
 - **LatinoHentai** (`LatinoHentaiProvider`) - [latinohentai.com](https://latinohentai.com/)
 

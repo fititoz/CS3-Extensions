@@ -67,6 +67,15 @@ class EsHentaiTvProvider : MainAPI() {
             )
         }
 
+        if (episodes.isEmpty()) {
+            episodes.add(
+                newEpisode(url) {
+                    this.name = title
+                    this.episode = 1
+                }
+            )
+        }
+
         return newAnimeLoadResponse(title, url, TvType.Anime) {
             posterUrl = poster?.let { fixUrl(it) }
             addEpisodes(DubStatus.Subbed, episodes.reversed()) // Usually episodes are listed latest first
