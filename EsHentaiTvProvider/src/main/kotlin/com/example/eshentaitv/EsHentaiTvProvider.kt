@@ -17,7 +17,10 @@ class EsHentaiTvProvider : MainAPI() {
 
     override val mainPage = mainPageOf(
         "$mainUrl/#capitulos" to "Últimos Capítulos Actualizados",
-        "$mainUrl/#series" to "Últimos Hentai Agregados"
+        "$mainUrl/#series" to "Últimos Hentai Agregados",
+        "$mainUrl/#aleatorio" to "Hentai Aleatorio",
+        "$mainUrl/#vistos" to "Más Vistos",
+        "$mainUrl/#censura" to "Sin Censura"
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
@@ -48,7 +51,10 @@ class EsHentaiTvProvider : MainAPI() {
             val fragment = request.data.substringAfter("#")
             val items = when (fragment) {
                 "capitulos" -> doc.select("ul.recent-h").firstOrNull()?.select("li a.preview") ?: emptyList()
-                "series" -> doc.select("article.serie")
+                "series" -> doc.select("ul.row.m-0.list-unstyled").firstOrNull()?.select("article.serie") ?: emptyList()
+                "aleatorio" -> doc.select("ul.row.m-0.list-unstyled").lastOrNull()?.select("article.serie") ?: emptyList()
+                "vistos" -> doc.select("h3:contains(Más vistos)").next("ul").select("li")
+                "censura" -> doc.select("h3:contains(Sin Censura)").next("ul").select("li")
                 else -> doc.select("article.serie")
             }
             items.mapNotNull { it.toSearchResponse() }
@@ -123,6 +129,25 @@ class EsHentaiTvProvider : MainAPI() {
         // Extract from script
         for (script in doc.select("script")) {
             val scriptData = script.data()
+
+            // Deobfuscate internal proxy URLs
+            val serverRegex = Regex("""['"](vk|opp|mail|docs|sen|drc|wish|turbo|your)['"][^;]*?['"](\d+/[a-f0-9]+)['"]""")
+            for (match in serverRegex.findAll(scriptData)) {
+                val server = match.groupValues[1]
+                val id = match.groupValues[2]
+                val proxyUrl = "$mainUrl/video/$server/index.php?url=$id"
+
+                try {
+                    val proxyDoc = app.get(proxyUrl, referer = data).document
+                    val realIframe = proxyDoc.selectFirst("iframe")?.attr("src")
+                    if (realIframe != null && realIframe.startsWith("http")) {
+                        loadExtractor(realIframe, proxyUrl, subtitleCallback, callback)
+                    }
+                } catch (e: Exception) {
+                    // Ignore
+                }
+            }
+
             // Look for base64 encoded URLs or raw URLs
             val base64Regex = Regex("""atob\(['"]([^'"]+)['"]\)""")
             for (match in base64Regex.findAll(scriptData)) {
