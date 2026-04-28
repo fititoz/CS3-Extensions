@@ -16,12 +16,22 @@ class EsHentaiTvProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.Anime)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/" to "Últimos Agregados"
+        "$mainUrl/#capitulos" to "Últimos Capítulos Actualizados",
+        "$mainUrl/#series" to "Últimos Hentai Agregados"
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
-        val title = this.selectFirst("h2.h-title")?.text() ?: this.selectFirst("h3.title")?.text() ?: return null
-        val href = fixUrl(this.selectFirst("a")?.attr("href") ?: return null)
+        val anchor = this.selectFirst("a") ?: return null
+        val title = this.selectFirst("h2.h-title")?.text() ?: this.selectFirst("h3.title")?.text() ?: anchor.attr("title") ?: return null
+        var href = fixUrl(anchor.attr("href"))
+        
+        // Convert episode URLs to series URLs: /slug-1/ -> /hentai-slug.html
+        val episodeMatch = Regex("""/([^/]+)-\d+/?$""").find(href)
+        if (episodeMatch != null) {
+            val slug = episodeMatch.groupValues[1]
+            href = "$mainUrl/hentai-$slug.html"
+        }
+        
         val poster = this.selectFirst("img")?.let { it.attr("data-src").ifEmpty { it.attr("src") } }
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
@@ -29,14 +39,29 @@ class EsHentaiTvProvider : MainAPI() {
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = if (page == 1) mainUrl else "$mainUrl/page/$page/"
-
+        val isFragment = request.data.contains("#")
+        val url = if (isFragment) request.data.substringBefore("#") else if (page == 1) request.data else "${request.data}/page/$page"
         val doc = app.get(url).document
-        val home = doc.select(".list-unstyled li a.preview, article.serie").mapNotNull { it.toSearchResponse() }
+
+        val home = if (isFragment) {
+            if (page > 1) return newHomePageResponse(HomePageList(request.name, emptyList()), hasNext = false)
+            val fragment = request.data.substringAfter("#")
+            val items = when (fragment) {
+                "capitulos" -> doc.select("ul.recent-h").firstOrNull()?.select("li a.preview") ?: emptyList()
+                "series" -> doc.select("article.serie")
+                else -> doc.select("article.serie")
+            }
+            items.mapNotNull { it.toSearchResponse() }
+        } else {
+            doc.select("article.serie").mapNotNull { it.toSearchResponse() }
+        }
 
         return newHomePageResponse(
-            list = HomePageList(request.name, home),
-            hasNext = home.isNotEmpty()
+            list = HomePageList(
+                name = request.name,
+                list = home
+            ),
+            hasNext = !isFragment && home.isNotEmpty()
         )
     }
 
