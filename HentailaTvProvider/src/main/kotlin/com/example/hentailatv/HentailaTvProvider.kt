@@ -140,7 +140,7 @@ class HentailaTvProvider : MainAPI() {
                         "b" to iv
                     ),
                     referer = data
-                ).text
+                ).text ?: ""
                 
                 val urlRegex = Regex("""(https?://[^\\]+?(?:mp4|m3u8|org|com)[^"\\]*)""")
                 for (match in urlRegex.findAll(apiResponse)) {
