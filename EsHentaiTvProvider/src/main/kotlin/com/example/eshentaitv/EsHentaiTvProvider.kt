@@ -151,14 +151,14 @@ class EsHentaiTvProvider : MainAPI() {
                         val fileMatch = fileRegex.find(responseText)?.groupValues?.get(1)
                         if (fileMatch != null) {
                             callback(
-                                ExtractorLink(
+                                newExtractorLink(
                                     source = name,
                                     name = server.replaceFirstChar { it.uppercase() },
                                     url = fileMatch,
-                                    referer = proxyUrlWithXxx,
-                                    quality = Qualities.Unknown.value,
-                                    isM3u8 = fileMatch.contains(".m3u8")
-                                )
+                                ) {
+                                    this.referer = proxyUrlWithXxx
+                                    this.quality = Qualities.Unknown.value
+                                }
                             )
                         }
                     }
