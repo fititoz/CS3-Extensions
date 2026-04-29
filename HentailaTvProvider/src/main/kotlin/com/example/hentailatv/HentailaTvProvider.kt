@@ -2,6 +2,7 @@ package com.example.hentailatv
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import android.util.Base64
 import org.jsoup.nodes.Element
 
 class HentailaTvProvider : MainAPI() {
@@ -113,10 +114,63 @@ class HentailaTvProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
-        for (iframe in doc.select(".player_logic_item iframe")) {
-            val url = iframe.attr("src")
-            if (url.isNotBlank()) {
-                loadExtractor(fixUrl(url), data, subtitleCallback, callback)
+        val xToken = doc.selectFirst("meta[name=x-secure-token]")?.attr("content")?.substringAfter("sha512-")
+        if (xToken != null) {
+            var decoded = xToken
+            for (i in 0 until 3) {
+                val rot = decoded.map {
+                    when {
+                        it in 'a'..'z' -> if (it <= 'm') it + 13 else it - 13
+                        it in 'A'..'Z' -> if (it <= 'M') it + 13 else it - 13
+                        else -> it
+                    }
+                }.joinToString("")
+                decoded = String(android.util.Base64.decode(rot, android.util.Base64.DEFAULT))
+            }
+            
+            val en = Regex(""""en"\s*:\s*"([^"]+)"""").find(decoded)?.groupValues?.get(1)
+            val iv = Regex(""""iv"\s*:\s*"([^"]+)"""").find(decoded)?.groupValues?.get(1)
+            
+            if (en != null && iv != null) {
+                val apiResponse = app.post(
+                    "$mainUrl/wp-content/plugins/player-logic/api.php",
+                    data = mapOf(
+                        "action" to "zarat_get_data_player_ajax",
+                        "a" to en,
+                        "b" to iv
+                    ),
+                    referer = data
+                ).text
+                
+                val urlRegex = Regex("""(https?://[^\\]+?(?:mp4|m3u8|org|com)[^"\\]*)""")
+                for (match in urlRegex.findAll(apiResponse)) {
+                    val vidUrl = match.groupValues[1]
+                    if (vidUrl.contains(".m3u8") || vidUrl.contains(".mp4")) {
+                        callback(
+                            ExtractorLink(
+                                source = name,
+                                name = name,
+                                url = vidUrl,
+                                referer = data,
+                                quality = Qualities.Unknown.value,
+                                isM3u8 = vidUrl.contains(".m3u8")
+                            )
+                        )
+                    } else if (vidUrl.contains("octopusmanifest") || vidUrl.contains("anpustream")) {
+                        callback(
+                            ExtractorLink(
+                                source = name,
+                                name = "Octopus/Anpu",
+                                url = "$vidUrl#.m3u8",
+                                referer = data,
+                                quality = Qualities.Unknown.value,
+                                isM3u8 = true
+                            )
+                        )
+                    } else {
+                        loadExtractor(vidUrl, data, subtitleCallback, callback)
+                    }
+                }
             }
         }
 
