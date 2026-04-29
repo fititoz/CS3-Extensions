@@ -147,25 +147,25 @@ class HentailaTvProvider : MainAPI() {
                     val vidUrl = match.groupValues[1]
                     if (vidUrl.contains(".m3u8") || vidUrl.contains(".mp4")) {
                         callback(
-                            ExtractorLink(
+                            newExtractorLink(
                                 source = name,
                                 name = name,
                                 url = vidUrl,
-                                referer = data,
-                                quality = Qualities.Unknown.value,
-                                isM3u8 = vidUrl.contains(".m3u8")
-                            )
+                            ) {
+                                this.referer = data
+                                this.quality = Qualities.Unknown.value
+                            }
                         )
                     } else if (vidUrl.contains("octopusmanifest") || vidUrl.contains("anpustream")) {
                         callback(
-                            ExtractorLink(
+                            newExtractorLink(
                                 source = name,
                                 name = "Octopus/Anpu",
                                 url = "$vidUrl#.m3u8",
-                                referer = data,
-                                quality = Qualities.Unknown.value,
-                                isM3u8 = true
-                            )
+                            ) {
+                                this.referer = data
+                                this.quality = Qualities.Unknown.value
+                            }
                         )
                     } else {
                         loadExtractor(vidUrl, data, subtitleCallback, callback)
