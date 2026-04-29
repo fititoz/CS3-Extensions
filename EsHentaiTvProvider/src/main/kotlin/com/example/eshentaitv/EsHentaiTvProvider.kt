@@ -154,7 +154,7 @@ class EsHentaiTvProvider : MainAPI() {
                         // Extract direct mp4 links from JWPlayer or Flashvars
                         val fileRegex = Regex("""(?:file|src)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
                         val fileMatch = fileRegex.find(responseText)?.groupValues?.get(1)
-                        if (fileMatch != null) {
+                        if (fileMatch != null && !fileMatch.contains("s3.amazonaws.com")) {
                             val finalUrl = if (!fileMatch.contains(".mp4") && !fileMatch.contains(".m3u8")) "$fileMatch#.mp4" else fileMatch
                             callback(
                                 newExtractorLink(
