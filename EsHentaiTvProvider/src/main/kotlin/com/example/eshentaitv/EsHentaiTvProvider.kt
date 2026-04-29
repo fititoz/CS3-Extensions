@@ -172,20 +172,24 @@ class EsHentaiTvProvider : MainAPI() {
                         loadExtractor(locationMatch, proxyUrlWithXxx, subtitleCallback, callback)
                     } else {
                         checkBase64(responseText)
-                        val fileRegex = Regex("""(?:file|src)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
+                        val fileRegex = Regex("""(?:file|src|link)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
                         val fileMatch = fileRegex.find(responseText)?.groupValues?.get(1)
                         if (fileMatch != null && !fileMatch.contains("s3.amazonaws.com")) {
-                            val finalUrl = if (!fileMatch.contains(".mp4") && !fileMatch.contains(".m3u8")) "$fileMatch#.mp4" else fileMatch
-                            callback(
-                                newExtractorLink(
-                                    source = name,
-                                    name = server.replaceFirstChar { it.uppercase() },
-                                    url = finalUrl,
-                                ) {
-                                    this.referer = proxyUrlWithXxx
-                                    this.quality = Qualities.Unknown.value
-                                }
-                            )
+                            if (fileMatch.contains(".mp4") || fileMatch.contains(".m3u8") || fileMatch.contains(".mkv")) {
+                                val finalUrl = fileMatch
+                                callback(
+                                    newExtractorLink(
+                                        source = name,
+                                        name = server.replaceFirstChar { it.uppercase() },
+                                        url = finalUrl,
+                                    ) {
+                                        this.referer = proxyUrlWithXxx
+                                        this.quality = Qualities.Unknown.value
+                                    }
+                                )
+                            } else {
+                                loadExtractor(fileMatch, proxyUrlWithXxx, subtitleCallback, callback)
+                            }
                         }
                     }
                 } catch (e: Exception) {
