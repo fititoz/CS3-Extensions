@@ -138,10 +138,29 @@ class EsHentaiTvProvider : MainAPI() {
                 val proxyUrl = "$mainUrl/video/$server/index.php?url=$id"
 
                 try {
-                    val proxyDoc = app.get(proxyUrl, referer = data).document
+                    val proxyUrlWithXxx = proxyUrl.replace("/video/", "/xxx/video/") // fallback to the literal path
+                    val responseText = app.get(proxyUrlWithXxx, referer = data).text
+                    val proxyDoc = org.jsoup.Jsoup.parse(responseText)
                     val realIframe = proxyDoc.selectFirst("iframe")?.attr("src")
+                    
                     if (realIframe != null && realIframe.startsWith("http")) {
-                        loadExtractor(realIframe, proxyUrl, subtitleCallback, callback)
+                        loadExtractor(realIframe, proxyUrlWithXxx, subtitleCallback, callback)
+                    } else {
+                        // Extract direct mp4 links from JWPlayer or Flashvars
+                        val fileRegex = Regex("""(?:file|src)["']?\s*[=:]\s*["']?(https?://[^"'\s&]+\.(?:mp4|m3u8)[^"'\s&]*)["']?""")
+                        val fileMatch = fileRegex.find(responseText)?.groupValues?.get(1)
+                        if (fileMatch != null) {
+                            callback(
+                                ExtractorLink(
+                                    source = name,
+                                    name = server.replaceFirstChar { it.uppercase() },
+                                    url = fileMatch,
+                                    referer = proxyUrlWithXxx,
+                                    quality = Qualities.Unknown.value,
+                                    isM3u8 = fileMatch.contains(".m3u8")
+                                )
+                            )
+                        }
                     }
                 } catch (e: Exception) {
                     // Ignore
