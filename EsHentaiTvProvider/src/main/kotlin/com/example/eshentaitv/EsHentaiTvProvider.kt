@@ -3,7 +3,7 @@ package com.example.eshentaitv
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
-import java.util.Base64
+import android.util.Base64
 
 class EsHentaiTvProvider : MainAPI() {
 
@@ -147,7 +147,24 @@ class EsHentaiTvProvider : MainAPI() {
                     val locationMatch = locationRegex.find(responseText)?.groupValues?.get(1)
 
                     if (realIframe != null && realIframe.startsWith("http")) {
-                        loadExtractor(realIframe, proxyUrlWithXxx, subtitleCallback, callback)
+                        if (realIframe.contains("eshentai.tv/xxx/player/")) {
+                            // Follow internal player iframe
+                            val playerHtml = app.get(realIframe, referer = proxyUrlWithXxx).text
+                            // The packed script contains an array with base64 strings like bWVkaWFmaXJlLmNvbQ (mediafire.com)
+                            // Look for base64 encoded URLs or hostnames
+                            val b64Regex = Regex("""[a-zA-Z0-9+/]{20,}={0,2}""")
+                            for (b64 in b64Regex.findAll(playerHtml)) {
+                                try {
+                                    val decoded = String(Base64.decode(b64.value, Base64.DEFAULT))
+                                    if (decoded.contains("mediafire.com") || decoded.startsWith("http")) {
+                                        val realUrl = if (decoded.startsWith("http")) decoded else "https://$decoded"
+                                        loadExtractor(realUrl, realIframe, subtitleCallback, callback)
+                                    }
+                                } catch (e: Exception) {}
+                            }
+                        } else {
+                            loadExtractor(realIframe, proxyUrlWithXxx, subtitleCallback, callback)
+                        }
                     } else if (locationMatch != null) {
                         loadExtractor(locationMatch, proxyUrlWithXxx, subtitleCallback, callback)
                     } else {
@@ -181,7 +198,7 @@ class EsHentaiTvProvider : MainAPI() {
             val base64Regex = Regex("""atob\(['"]([^'"]+)['"]\)""")
             for (match in base64Regex.findAll(scriptData)) {
                 try {
-                    val decoded = String(Base64.getDecoder().decode(match.groupValues[1]))
+                    val decoded = String(Base64.decode(match.groupValues[1], Base64.DEFAULT))
                     if (decoded.startsWith("http")) {
                         loadExtractor(decoded, data, subtitleCallback, callback)
                     }
@@ -205,7 +222,7 @@ class EsHentaiTvProvider : MainAPI() {
             val base64Regex = Regex("""atob\(['"]([^'"]+)['"]\)""")
             for (match in base64Regex.findAll(onclick)) {
                 try {
-                    val decoded = String(Base64.getDecoder().decode(match.groupValues[1]))
+                    val decoded = String(Base64.decode(match.groupValues[1], Base64.DEFAULT))
                     if (decoded.startsWith("http")) {
                         loadExtractor(decoded, data, subtitleCallback, callback)
                     }
