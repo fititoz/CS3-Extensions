@@ -138,55 +138,54 @@ class EsHentaiTvProvider : MainAPI() {
                 val proxyUrl = "$mainUrl/video/$server/index.php?url=$id"
 
                 try {
-                    val proxyUrlWithXxx = proxyUrl.replace("/video/", "/xxx/video/") // fallback to the literal path
+                    val proxyUrlWithXxx = proxyUrl.replace("/video/", "/xxx/video/")
                     val responseText = app.get(proxyUrlWithXxx, referer = data).text
                     val proxyDoc = org.jsoup.Jsoup.parse(responseText)
                     val realIframe = proxyDoc.selectFirst("iframe")?.attr("src")
-                    
+
                     val locationRegex = Regex("""location\.replace\(['"](https?://[^'"]+)['"]\)""")
-                    val locationMatch = locationRegex.find(responseText)?.groupValues?.get(1)
+                    var locationMatch = locationRegex.find(responseText)?.groupValues?.get(1)
+
+                    // Helper to decode base64 arrays in obfuscated JS
+                    val checkBase64 = suspend { html: String ->
+                        val b64Regex = Regex("""['"]([a-zA-Z0-9+/]{15,}={0,2})['"]""")
+                        for (b64 in b64Regex.findAll(html)) {
+                            try {
+                                val decoded = String(android.util.Base64.decode(b64.groupValues[1], android.util.Base64.DEFAULT))
+                                if (decoded.contains("mediafire.com") || decoded.startsWith("http")) {
+                                    val realUrl = if (decoded.startsWith("http")) decoded else "https://$decoded"
+                                    loadExtractor(realUrl, proxyUrlWithXxx, subtitleCallback, callback)
+                                }
+                            } catch (e: Exception) {}
+                        }
+                    }
 
                     if (realIframe != null && realIframe.startsWith("http")) {
                         if (realIframe.contains("eshentai.tv/xxx/player/")) {
-                            // Follow internal player iframe
                             val playerHtml = app.get(realIframe, referer = proxyUrlWithXxx).text
-                            // The packed script contains an array with base64 strings like bWVkaWFmaXJlLmNvbQ (mediafire.com)
-                            // Look for base64 encoded URLs or hostnames
-                            val b64Regex = Regex("""[a-zA-Z0-9+/]{20,}={0,2}""")
-                            for (b64 in b64Regex.findAll(playerHtml)) {
-                                try {
-                                    val decoded = String(Base64.decode(b64.value, Base64.DEFAULT))
-                                    if (decoded.contains("mediafire.com") || decoded.startsWith("http")) {
-                                        val realUrl = if (decoded.startsWith("http")) decoded else "https://$decoded"
-                                        loadExtractor(realUrl, realIframe, subtitleCallback, callback)
-                                    }
-                                } catch (e: Exception) {}
-                            }
+                            checkBase64(playerHtml)
                         } else {
                             loadExtractor(realIframe, proxyUrlWithXxx, subtitleCallback, callback)
                         }
                     } else if (locationMatch != null) {
+                        locationMatch = locationMatch.replace("playerwish.com", "streamwish.to")
                         loadExtractor(locationMatch, proxyUrlWithXxx, subtitleCallback, callback)
                     } else {
-                        // Extract direct mp4 links from JWPlayer or Flashvars or gkplugins
-                        val fileRegex = Regex("""(?:file|src|link)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
+                        checkBase64(responseText)
+                        val fileRegex = Regex("""(?:file|src)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
                         val fileMatch = fileRegex.find(responseText)?.groupValues?.get(1)
                         if (fileMatch != null && !fileMatch.contains("s3.amazonaws.com")) {
-                            if (fileMatch.contains(".mp4") || fileMatch.contains(".m3u8") || fileMatch.contains(".mkv")) {
-                                callback(
-                                    newExtractorLink(
-                                        source = name,
-                                        name = server.replaceFirstChar { it.uppercase() },
-                                        url = fileMatch,
-                                    ) {
-                                        this.referer = proxyUrlWithXxx
-                                        this.quality = Qualities.Unknown.value
-                                    }
-                                )
-                            } else {
-                                // It's probably a host embed like Google Drive
-                                loadExtractor(fileMatch, proxyUrlWithXxx, subtitleCallback, callback)
-                            }
+                            val finalUrl = if (!fileMatch.contains(".mp4") && !fileMatch.contains(".m3u8")) "$fileMatch#.mp4" else fileMatch
+                            callback(
+                                newExtractorLink(
+                                    source = name,
+                                    name = server.replaceFirstChar { it.uppercase() },
+                                    url = finalUrl,
+                                ) {
+                                    this.referer = proxyUrlWithXxx
+                                    this.quality = Qualities.Unknown.value
+                                }
+                            )
                         }
                     }
                 } catch (e: Exception) {
