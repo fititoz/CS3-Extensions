@@ -15,13 +15,21 @@ class HentailaTvProvider : MainAPI() {
     override val supportedTypes = setOf(TvType.Anime)
 
     override val mainPage = mainPageOf(
-        "$mainUrl/" to "Últimos Agregados"
+        "$mainUrl/#nuevos" to "Nuevos",
+        "$mainUrl/#vistos" to "Lo mas Visto",
+        "$mainUrl/#censura" to "Sin Censura",
+        "$mainUrl/#incesto" to "Incesto Hentai",
+        "$mainUrl/#milfs" to "Milfs",
+        "$mainUrl/#yuri" to "Yuri - Lesbianas",
+        "$mainUrl/#escolares" to "Escolares",
+        "$mainUrl/page/" to "Últimos Agregados"
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
-        val title = this.selectFirst("h3 a")?.text() ?: this.selectFirst("h3")?.text() ?: return null
-        val href = fixUrl(this.selectFirst("a")?.attr("href") ?: return null)
-        val poster = this.selectFirst("img")?.attr("src")
+        val anchor = this.selectFirst("a.card__cover") ?: return null
+        val title = this.selectFirst(".card__title")?.text() ?: return null
+        val href = fixUrl(anchor.attr("href"))
+        val poster = anchor.selectFirst("img")?.attr("src")
 
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
@@ -29,32 +37,55 @@ class HentailaTvProvider : MainAPI() {
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val url = if (page == 1) mainUrl else "$mainUrl/page/$page/"
-
+        val isFragment = request.data.contains("#")
+        val url = if (isFragment) request.data.substringBefore("#") else if (page == 1) mainUrl else "$mainUrl/page/$page/"
         val doc = app.get(url).document
-        val home = doc.select("article.item").mapNotNull { it.toSearchResponse() }
+
+        val home = if (isFragment) {
+            if (page > 1) return newHomePageResponse(HomePageList(request.name, emptyList()), hasNext = false)
+            val fragment = request.data.substringAfter("#")
+            val headerText = when (fragment) {
+                "nuevos" -> "Nuevos"
+                "vistos" -> "Lo mas Visto"
+                "censura" -> "Sin Censura"
+                "incesto" -> "Incesto Hentai"
+                "milfs" -> "Milfs"
+                "yuri" -> "Yuri"
+                "escolares" -> "Escolares"
+                else -> null
+            }
+
+            val items = if (headerText != null) {
+                doc.select("h3.title:contains($headerText)").firstOrNull()?.parent()?.nextElementSibling()?.select(".item_card") ?: emptyList()
+            } else {
+                doc.select(".item_card")
+            }
+            items.mapNotNull { it.toSearchResponse() }
+        } else {
+            doc.select(".item_card").mapNotNull { it.toSearchResponse() }
+        }
 
         return newHomePageResponse(
             list = HomePageList(request.name, home),
-            hasNext = doc.select("div.pagination a").isNotEmpty()
+            hasNext = !isFragment && doc.select("div.pagination a").isNotEmpty()
         )
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
         val doc = app.get("$mainUrl/?s=$query").document
-        return doc.select("article.item").mapNotNull { it.toSearchResponse() }
+        return doc.select(".item_card").mapNotNull { it.toSearchResponse() }
     }
 
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
 
         val title = doc.selectFirst("h1")?.text() ?: ""
-        val poster = doc.selectFirst("div.poster img")?.attr("src")
-        val description = doc.selectFirst("div.wp-content p")?.text() ?: doc.selectFirst("div.description")?.text()
+        val poster = doc.selectFirst("div.poster img")?.attr("src") ?: doc.selectFirst(".card__cover img")?.attr("src")
+        val description = doc.selectFirst("div.wp-content p")?.text() ?: doc.selectFirst("div.description")?.text() ?: doc.selectFirst(".vraven_text.single p")?.text()
         val genres = doc.select("div.sgeneros a").map { it.text().trim() }
 
         val episodes = ArrayList<Episode>()
-        for (a in doc.select("ul.episodios li a, ul.episodes li a")) {
+        for (a in doc.select("ul.episodios li a, ul.episodes li a, .hentai__episodes ul li.hentai__chapter a")) {
             val href = a.attr("href")
             val epName = a.text().trim()
             val epNum = Regex("""(\d+)""").find(epName)?.groupValues?.get(1)?.toIntOrNull()
