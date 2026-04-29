@@ -151,21 +151,25 @@ class EsHentaiTvProvider : MainAPI() {
                     } else if (locationMatch != null) {
                         loadExtractor(locationMatch, proxyUrlWithXxx, subtitleCallback, callback)
                     } else {
-                        // Extract direct mp4 links from JWPlayer or Flashvars
-                        val fileRegex = Regex("""(?:file|src)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
+                        // Extract direct mp4 links from JWPlayer or Flashvars or gkplugins
+                        val fileRegex = Regex("""(?:file|src|link)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
                         val fileMatch = fileRegex.find(responseText)?.groupValues?.get(1)
                         if (fileMatch != null && !fileMatch.contains("s3.amazonaws.com")) {
-                            val finalUrl = if (!fileMatch.contains(".mp4") && !fileMatch.contains(".m3u8")) "$fileMatch#.mp4" else fileMatch
-                            callback(
-                                newExtractorLink(
-                                    source = name,
-                                    name = server.replaceFirstChar { it.uppercase() },
-                                    url = finalUrl,
-                                ) {
-                                    this.referer = proxyUrlWithXxx
-                                    this.quality = Qualities.Unknown.value
-                                }
-                            )
+                            if (fileMatch.contains(".mp4") || fileMatch.contains(".m3u8") || fileMatch.contains(".mkv")) {
+                                callback(
+                                    newExtractorLink(
+                                        source = name,
+                                        name = server.replaceFirstChar { it.uppercase() },
+                                        url = fileMatch,
+                                    ) {
+                                        this.referer = proxyUrlWithXxx
+                                        this.quality = Qualities.Unknown.value
+                                    }
+                                )
+                            } else {
+                                // It's probably a host embed like Google Drive
+                                loadExtractor(fileMatch, proxyUrlWithXxx, subtitleCallback, callback)
+                            }
                         }
                     }
                 } catch (e: Exception) {
