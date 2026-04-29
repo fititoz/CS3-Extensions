@@ -150,11 +150,12 @@ class EsHentaiTvProvider : MainAPI() {
                         val fileRegex = Regex("""(?:file|src)["']?\s*[=:]\s*["']?(https?://[^"'\s&<>]+)["']?""")
                         val fileMatch = fileRegex.find(responseText)?.groupValues?.get(1)
                         if (fileMatch != null) {
+                            val finalUrl = if (!fileMatch.contains(".mp4") && !fileMatch.contains(".m3u8")) "$fileMatch#.mp4" else fileMatch
                             callback(
                                 newExtractorLink(
                                     source = name,
                                     name = server.replaceFirstChar { it.uppercase() },
-                                    url = fileMatch,
+                                    url = finalUrl,
                                 ) {
                                     this.referer = proxyUrlWithXxx
                                     this.quality = Qualities.Unknown.value
