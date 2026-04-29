@@ -116,7 +116,7 @@ class HentailaTvProvider : MainAPI() {
 
         val xToken = doc.selectFirst("meta[name=x-secure-token]")?.attr("content")?.substringAfter("sha512-")
         if (xToken != null) {
-            var decoded = xToken
+            var decoded = xToken!!
             for (i in 0 until 3) {
                 val rot = decoded.map {
                     when {
@@ -140,35 +140,37 @@ class HentailaTvProvider : MainAPI() {
                         "b" to iv
                     ),
                     referer = data
-                ).text ?: ""
+                ).text
                 
-                val urlRegex = Regex("""(https?://[^\\]+?(?:mp4|m3u8|org|com)[^"\\]*)""")
-                for (match in urlRegex.findAll(apiResponse)) {
-                    val vidUrl = match.groupValues[1]
-                    if (vidUrl.contains(".m3u8") || vidUrl.contains(".mp4")) {
-                        callback(
-                            newExtractorLink(
-                                source = name,
-                                name = name,
-                                url = vidUrl,
-                            ) {
-                                this.referer = data
-                                this.quality = Qualities.Unknown.value
-                            }
-                        )
-                    } else if (vidUrl.contains("octopusmanifest") || vidUrl.contains("anpustream")) {
-                        callback(
-                            newExtractorLink(
-                                source = name,
-                                name = "Octopus/Anpu",
-                                url = "$vidUrl#.m3u8",
-                            ) {
-                                this.referer = data
-                                this.quality = Qualities.Unknown.value
-                            }
-                        )
-                    } else {
-                        loadExtractor(vidUrl, data, subtitleCallback, callback)
+                if (apiResponse != null) {
+                    val urlRegex = Regex("""(https?://[^\\]+?(?:mp4|m3u8|org|com)[^"\\]*)""")
+                    for (match in urlRegex.findAll(apiResponse)) {
+                        val vidUrl = match.groupValues[1]
+                        if (vidUrl.contains(".m3u8") || vidUrl.contains(".mp4")) {
+                            callback(
+                                newExtractorLink(
+                                    source = name,
+                                    name = name,
+                                    url = vidUrl,
+                                ) {
+                                    this.referer = data
+                                    this.quality = Qualities.Unknown.value
+                                }
+                            )
+                        } else if (vidUrl.contains("octopusmanifest") || vidUrl.contains("anpustream")) {
+                            callback(
+                                newExtractorLink(
+                                    source = name,
+                                    name = "Octopus/Anpu",
+                                    url = "$vidUrl#.m3u8",
+                                ) {
+                                    this.referer = data
+                                    this.quality = Qualities.Unknown.value
+                                }
+                            )
+                        } else {
+                            loadExtractor(vidUrl, data, subtitleCallback, callback)
+                        }
                     }
                 }
             }
