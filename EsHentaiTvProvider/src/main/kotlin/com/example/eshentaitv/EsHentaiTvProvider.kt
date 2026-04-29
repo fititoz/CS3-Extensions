@@ -146,6 +146,11 @@ class EsHentaiTvProvider : MainAPI() {
                     val locationRegex = Regex("""location\.replace\(['"](https?://[^'"]+)['"]\)""")
                     var locationMatch = locationRegex.find(responseText)?.groupValues?.get(1)
 
+                    if (locationMatch == null) {
+                        val metaRegex = Regex("""url=(https?://[^"'>]+)""")
+                        locationMatch = metaRegex.find(responseText)?.groupValues?.get(1)
+                    }
+
                     // Helper to decode base64 arrays in obfuscated JS
                     val checkBase64 = suspend { html: String ->
                         val b64Regex = Regex("""['"]([a-zA-Z0-9+/]{15,}={0,2})['"]""")
