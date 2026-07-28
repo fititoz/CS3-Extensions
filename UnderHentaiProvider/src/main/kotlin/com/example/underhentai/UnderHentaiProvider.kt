@@ -22,13 +22,14 @@ class UnderHentaiProvider : MainAPI() {
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
-        val anchor = this.selectFirst("h2 a") ?: this.selectFirst("a[href]") ?: return null
-        val title = anchor.text().trim()
+        val anchor = this.selectFirst("a.flex-col") ?: this.selectFirst("a[href]") ?: return null
+        val title = this.selectFirst("h3")?.text()?.trim() ?: return null
         if (title.isEmpty()) return null
         val href = fixUrl(anchor.attr("href"))
-        val poster = this.selectFirst("img")?.let { img ->
+        val poster = this.selectFirst("img.img-d")?.let { img ->
             img.attr("src").ifEmpty { img.attr("data-src") }
-        }
+        } ?: this.selectFirst("img")?.attr("src")
+        
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
         }
@@ -38,7 +39,7 @@ class UnderHentaiProvider : MainAPI() {
         val url = "${request.data}$page/"
         val doc = app.get(url).document
 
-        val home = doc.select(".content article").mapNotNull { it.toSearchResponse() }
+        val home = doc.select("article.post-card").mapNotNull { it.toSearchResponse() }
 
         return newHomePageResponse(
             list = HomePageList(
@@ -54,7 +55,7 @@ class UnderHentaiProvider : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         // WordPress standard search: /?s=query
         val doc = app.get("$mainUrl/?s=$query").document
-        return doc.select(".content article").mapNotNull { it.toSearchResponse() }
+        return doc.select("article.post-card").mapNotNull { it.toSearchResponse() }
     }
 
     override suspend fun load(url: String): LoadResponse {
@@ -70,21 +71,24 @@ class UnderHentaiProvider : MainAPI() {
 
         val episodes = ArrayList<Episode>()
 
-        // Strategy: find all watch links, extract ep number, 
-        // read nearby text for language info
-        doc.select(".ep2-box").forEach { box ->
-            val epName = box.selectFirst(".ep2-header")?.text()?.trim() ?: "Episode"
+        val epBoxes = doc.select("div.ep-box")
+        for (box in epBoxes) {
+            val epName = box.selectFirst("div.ep-header")?.text()?.trim() ?: "Episode"
             
-            box.select(".ep2-card").forEach cardLoop@{ card ->
-                val streamAnchor = card.selectFirst("a.ep2-stream") ?: return@cardLoop
-                val href = fixUrl(streamAnchor.attr("href"))
-                val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull() ?: return@cardLoop
+            val links = box.select("a[href*='/watch/']")
+            for (a in links) {
+                val href = fixUrl(a.attr("href"))
+                val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull() ?: continue
                 
-                val vtype = card.selectFirst(".ep2-vtype")?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
-                val subsNode = card.select(".ep2-meta-item").find { it.select(".ep2-meta-label").text().contains("Subs") }
-                val subs = subsNode?.selectFirst(".ep2-meta-value")?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
+                val actionsContainer = a.closest("div.variant-actions") ?: a.parent()
+                val metaContainer = actionsContainer?.previousElementSibling()
+                val headerContainer = metaContainer?.previousElementSibling()
                 
-                val langLabel = if (subs.contains("None", true) || subs.isEmpty()) vtype else "$vtype - $subs"
+                val vtype = headerContainer?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
+                val subsNode = metaContainer?.select("div.meta-item")?.find { it.select("div.meta-label").text().contains("Subs", true) }
+                val subs = subsNode?.selectFirst("div.meta-value")?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
+                
+                val langLabel = if (subs.contains("None", true) || subs.isEmpty()) vtype else "$vtype - $subs Subs"
                 val finalName = if (langLabel.isNotEmpty()) "$epName ($langLabel)" else epName
                 
                 if (episodes.none { it.data == href }) {
