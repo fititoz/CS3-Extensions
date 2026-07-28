@@ -22,13 +22,12 @@ class UnderHentaiProvider : MainAPI() {
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
-        val anchor = this.selectFirst("a.flex-col") ?: this.selectFirst("a[href]") ?: return null
+        val anchor = this.selectFirst("a[href]") ?: return null
         val title = this.selectFirst("h3")?.text()?.trim() ?: return null
         if (title.isEmpty()) return null
         val href = fixUrl(anchor.attr("href"))
-        val poster = this.selectFirst("img.img-d")?.let { img ->
-            img.attr("src").ifEmpty { img.attr("data-src") }
-        } ?: this.selectFirst("img")?.attr("src")
+        val img = this.selectFirst("img")
+        val poster = img?.attr("src")?.ifEmpty { img.attr("srcset").substringBefore(" ") }?.ifEmpty { img.attr("data-src") }
         
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
@@ -61,41 +60,37 @@ class UnderHentaiProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val doc = app.get(url).document
 
-        val title = doc.selectFirst("h1")?.text()
-            ?: doc.selectFirst(".article-header h2")?.text()
-            ?: ""
-        val poster = doc.selectFirst(".content img[src*='static.underhentai.net']")?.attr("src")
-            ?: doc.selectFirst(".content img")?.let { it.attr("src").ifEmpty { it.attr("data-src") } }
-        val description = doc.selectFirst("meta[property=og:description]")?.attr("content")
-        val genres = doc.select("a[href*='/tag/']").map { it.text().trim() }
+        val title = doc.selectFirst("h2.text-truncate-2")?.text()?.trim() ?: ""
+        val poster = doc.selectFirst("aside.post-sidebar a.glightbox")?.attr("href")?.ifEmpty { null }
+            ?: doc.selectFirst("aside.post-sidebar img")?.attr("src")
+        val description = doc.selectFirst("div.row-desc p")?.text()?.trim()
+        val genres = doc.select("ul.tags-list li a.label").map { it.text().trim() }
 
         val episodes = ArrayList<Episode>()
 
-        val epBoxes = doc.select("div.ep-box")
+        val epBoxes = doc.select(".ep-box")
         for (box in epBoxes) {
-            val epName = box.selectFirst("div.ep-header")?.text()?.trim() ?: "Episode"
+            val epName = box.selectFirst(".ep-header")?.text()?.trim() ?: "Episode"
             
-            val links = box.select("a[href*='/watch/']")
+            val links = box.select("a.actions-value[href*='/watch/']")
             for (a in links) {
                 val href = fixUrl(a.attr("href"))
-                val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull() ?: continue
+                val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull()
                 
-                val actionsContainer = a.closest("div.variant-actions") ?: a.parent()
-                val metaContainer = actionsContainer?.previousElementSibling()
-                val headerContainer = metaContainer?.previousElementSibling()
+                val container = a.closest(".variant-actions")?.parent() ?: a.parent()?.parent()
+                val variantHeader = container?.selectFirst(".variant-header")?.text()?.trim()
+                val variantMeta = container?.selectFirst(".variant-meta")?.text()?.trim()
                 
-                val vtype = headerContainer?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
-                val subsNode = metaContainer?.select("div.meta-item")?.find { it.select("div.meta-label").text().contains("Subs", true) }
-                val subs = subsNode?.selectFirst("div.meta-value")?.text()?.replace(Regex("[^A-Za-z ]"), "")?.trim() ?: ""
-                
-                val langLabel = if (subs.contains("None", true) || subs.isEmpty()) vtype else "$vtype - $subs Subs"
-                val finalName = if (langLabel.isNotEmpty()) "$epName ($langLabel)" else epName
+                val tags = listOfNotNull(variantHeader, variantMeta).filter { it.isNotBlank() }.joinToString(" - ")
+                val finalName = if (tags.isNotEmpty()) "$epName ($tags)" else epName
                 
                 if (episodes.none { it.data == href }) {
                     episodes.add(
                         newEpisode(href) {
                             this.name = finalName
-                            this.episode = epParam
+                            if (epParam != null) {
+                                this.episode = epParam
+                            }
                         }
                     )
                 }
