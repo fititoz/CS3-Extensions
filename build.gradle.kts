@@ -66,8 +66,9 @@ subprojects {
 
     dependencies {
         val implementation by configurations
+        val cloudstream by configurations
 
-        implementation("com.github.recloudstream.cloudstream:library:master")
+        cloudstream("com.lagradost:cloudstream3:pre-release")
 
         implementation(kotlin("stdlib"))
         implementation("com.github.Blatzar:NiceHttp:0.4.11")
