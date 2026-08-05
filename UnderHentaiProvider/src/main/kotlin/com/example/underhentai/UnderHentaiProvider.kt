@@ -77,9 +77,12 @@ class UnderHentaiProvider : MainAPI() {
                 val href = fixUrl(a.attr("href"))
                 val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull()
                 
-                val container = a.closest(".variant-actions")?.parent() ?: a.parent()?.parent()
-                val variantHeader = container?.selectFirst(".variant-header")?.text()?.trim()
-                val variantMeta = container?.selectFirst(".variant-meta")?.text()?.trim()
+                val actions = a.closest(".variant-actions")
+                val meta = actions?.previousElementSibling()
+                val header = meta?.previousElementSibling()
+                
+                val variantHeader = header?.text()?.trim()
+                val variantMeta = meta?.text()?.trim()
                 
                 val tags = listOfNotNull(variantHeader, variantMeta).filter { it.isNotBlank() }.joinToString(" - ")
                 val finalName = if (tags.isNotEmpty()) "$epName ($tags)" else epName
@@ -111,13 +114,13 @@ class UnderHentaiProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val doc = app.get(data).document
+        val doc = app.get(data, referer = mainUrl).document
 
         // 1. Direct iframes
-        doc.select("iframe[src]").forEach { iframe ->
-            val src = iframe.attr("src")
+        doc.select("iframe").forEach { iframe ->
+            val src = iframe.attr("src").ifEmpty { iframe.attr("data-src") }
             if (src.isNotEmpty() && !src.startsWith("about:")) {
-                loadExtractor(fixUrl(src), mainUrl, subtitleCallback, callback)
+                loadExtractor(fixUrl(src), data, subtitleCallback, callback)
             }
         }
 
@@ -129,7 +132,7 @@ class UnderHentaiProvider : MainAPI() {
                 iframeRegex.findAll(scriptData).forEach { match ->
                     val url = match.groupValues[1]
                     if (url.startsWith("http") && !url.contains("underhentai.net")) {
-                        loadExtractor(url, mainUrl, subtitleCallback, callback)
+                        loadExtractor(url, data, subtitleCallback, callback)
                     }
                 }
             }
@@ -147,7 +150,7 @@ class UnderHentaiProvider : MainAPI() {
                         name = name,
                         url = videoUrl,
                     ) {
-                        this.referer = mainUrl
+                        this.referer = data
                         this.quality = Qualities.Unknown.value
                     }
                 )
