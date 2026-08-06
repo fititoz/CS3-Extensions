@@ -125,7 +125,7 @@ class UnderHentaiProvider : MainAPI() {
         doc.select("iframe").forEach { iframe ->
             val src = iframe.attr("src").ifEmpty { iframe.attr("data-src") }
             if (src.isNotEmpty() && !src.startsWith("about:")) {
-                loadExtractor(fixUrl(src), data, subtitleCallback, callback)
+                loadExtractor(fixUrl(src), mainUrl, subtitleCallback, callback)
             }
         }
 
@@ -137,7 +137,7 @@ class UnderHentaiProvider : MainAPI() {
                 iframeRegex.findAll(scriptData).forEach { match ->
                     val url = match.groupValues[1]
                     if (url.startsWith("http") && !url.contains("underhentai.net")) {
-                        loadExtractor(url, data, subtitleCallback, callback)
+                        loadExtractor(url, mainUrl, subtitleCallback, callback)
                     }
                 }
             }
@@ -155,7 +155,7 @@ class UnderHentaiProvider : MainAPI() {
                         name = name,
                         url = videoUrl,
                     ) {
-                        this.referer = data
+                        this.referer = mainUrl
                         this.quality = Qualities.Unknown.value
                     }
                 )
