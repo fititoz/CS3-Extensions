@@ -79,13 +79,18 @@ class UnderHentaiProvider : MainAPI() {
                 
                 val actions = a.closest(".variant-actions")
                 val meta = actions?.previousElementSibling()
-                val header = meta?.previousElementSibling()
                 
-                val variantHeader = header?.text()?.trim()
-                val variantMeta = meta?.text()?.trim()
+                val subsItem = meta?.select(".meta-item")?.find { it.text().contains("Subs", ignoreCase = true) }
+                val subsValue = subsItem?.selectFirst(".meta-value, span")?.text()?.trim() ?: ""
                 
-                val tags = listOfNotNull(variantHeader, variantMeta).filter { it.isNotBlank() }.joinToString(" - ")
-                val finalName = if (tags.isNotEmpty()) "$epName ($tags)" else epName
+                val subLabel = when {
+                    subsValue.contains("English", ignoreCase = true) -> "SUB ENG"
+                    subsValue.contains("Spanish", ignoreCase = true) -> "SUB ESP"
+                    subsValue.contains("None", ignoreCase = true) || subsValue.isEmpty() -> "RAW"
+                    else -> "SUB ${subsValue.uppercase().take(3)}"
+                }
+                
+                val finalName = "$epName [$subLabel]"
                 
                 if (episodes.none { it.data == href }) {
                     episodes.add(
@@ -114,7 +119,7 @@ class UnderHentaiProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val doc = app.get(data, referer = mainUrl).document
+        val doc = app.get(data, referer = data).document
 
         // 1. Direct iframes
         doc.select("iframe").forEach { iframe ->
@@ -127,8 +132,8 @@ class UnderHentaiProvider : MainAPI() {
         // 2. Iframes in scripts (lazy-loaded via JS)
         doc.select("script").forEach { script ->
             val scriptData = script.data()
-            if (scriptData.contains("iframe") || scriptData.contains("src=")) {
-                val iframeRegex = Regex("""(?:src|url)\s*[=:]\s*\\?['"]([^'"\\]+)\\?['"]""")
+            if (scriptData.contains("iframe") || scriptData.contains("src=") || scriptData.contains("data-src=")) {
+                val iframeRegex = Regex("""(?:data-src|src|url)\s*[=:]\s*\\?['"]([^'"\\]+)\\?['"]""")
                 iframeRegex.findAll(scriptData).forEach { match ->
                     val url = match.groupValues[1]
                     if (url.startsWith("http") && !url.contains("underhentai.net")) {
