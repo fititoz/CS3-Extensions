@@ -119,7 +119,7 @@ class UnderHentaiProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val doc = app.get(data, referer = data).document
+        val doc = app.get(data, referer = mainUrl).document
 
         // 1. Direct iframes
         doc.select("iframe").forEach { iframe ->
