@@ -23,7 +23,7 @@ class HentailaTvProvider : MainAPI() {
         "$mainUrl/#milfs" to "Milfs",
         "$mainUrl/#yuri" to "Yuri - Lesbianas",
         "$mainUrl/#escolares" to "Escolares",
-        "$mainUrl/page/" to "Últimos Agregados"
+        "$mainUrl/page/" to "Ultimos Agregados"
     )
 
     private fun Element.toSearchResponse(): AnimeSearchResponse? {
@@ -114,6 +114,19 @@ class HentailaTvProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data).document
 
+        // Try new method first: iframe with player URL containing encoded data
+        val playerIframe = doc.selectFirst("iframe[src*=\"player.php\"]")
+        if (playerIframe != null) {
+            val playerUrl = playerIframe.attr("src")
+            if (playerUrl != null && playerUrl.contains("data=")) {
+                val encodedData = playerUrl.substringAfter("data=")
+                if (decodeAndProcessPlayerData(encodedData, data, callback)) {
+                    return true
+                }
+            }
+        }
+
+        // Fallback: try old method with x-secure-token
         val xToken = doc.selectFirst("meta[name=x-secure-token]")?.attr("content")?.substringAfter("sha512-")
         if (xToken != null) {
             var decoded = xToken!!
@@ -127,10 +140,10 @@ class HentailaTvProvider : MainAPI() {
                 }.joinToString("")
                 decoded = String(android.util.Base64.decode(rot, android.util.Base64.DEFAULT))
             }
-            
-            val en = Regex(""""en"\s*:\s*"([^"]+)"""").find(decoded)?.groupValues?.get(1)
-            val iv = Regex(""""iv"\s*:\s*"([^"]+)"""").find(decoded)?.groupValues?.get(1)
-            
+
+            val en = Regex("""\"en\"\s*:\s*\"([^\"]+)\"""").find(decoded)?.groupValues?.get(1)
+            val iv = Regex("""\"iv\"\s*:\s*\"([^\"]+)\"""").find(decoded)?.groupValues?.get(1)
+
             if (en != null && iv != null) {
                 val apiResponse = app.post(
                     "$mainUrl/wp-content/plugins/player-logic/api.php",
@@ -141,9 +154,9 @@ class HentailaTvProvider : MainAPI() {
                     ),
                     referer = data
                 ).text
-                
+
                 if (apiResponse != null) {
-                    val urlRegex = Regex("""(https?://[^\\]+?(?:mp4|m3u8|org|com)[^"\\]*)""")
+                    val urlRegex = Regex("""(https?://[^\\]+?(?:mp4|m3u8|org|com)[^\"\\]*)""")
                     for (match in urlRegex.findAll(apiResponse)) {
                         val vidUrl = match.groupValues[1]
                         if (vidUrl.contains(".m3u8") || vidUrl.contains(".mp4")) {
@@ -177,5 +190,84 @@ class HentailaTvProvider : MainAPI() {
         }
 
         return true
+    }
+
+    private fun decodeAndProcessPlayerData(
+        encodedData: String,
+        referer: String,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
+        try {
+            // Decode the data parameter (it's URL encoded, then base64, then rot13 x3)
+            var decoded = encodedData
+
+            // URL decode first
+            decoded = java.net.URLDecoder.decode(decoded, "UTF-8")
+
+            // Apply rot13 + base64 decode 3 times (reverse of encoding)
+            for (i in 0 until 3) {
+                val rot = decoded.map {
+                    when {
+                        it in 'a'..'z' -> if (it <= 'm') it + 13 else it - 13
+                        it in 'A'..'Z' -> if (it <= 'M') it + 13 else it - 13
+                        else -> it
+                    }
+                }.joinToString("")
+                decoded = String(android.util.Base64.decode(rot, android.util.Base64.DEFAULT))
+            }
+
+            // Extract en and iv from decoded JSON
+            val en = Regex("""\"en\"\s*:\s*\"([^\"]+)\"""").find(decoded)?.groupValues?.get(1)
+            val iv = Regex("""\"iv\"\s*:\s*\"([^\"]+)\"""").find(decoded)?.groupValues?.get(1)
+
+            if (en != null && iv != null) {
+                val apiResponse = app.post(
+                    "$mainUrl/wp-content/plugins/player-logic/api.php",
+                    data = mapOf(
+                        "action" to "zarat_get_data_player_ajax",
+                        "a" to en,
+                        "b" to iv
+                    ),
+                    referer = referer
+                ).text
+
+                if (apiResponse != null) {
+                    val urlRegex = Regex("""(https?://[^\\]+?(?:mp4|m3u8|org|com)[^\"\\]*)""")
+                    for (match in urlRegex.findAll(apiResponse)) {
+                        val vidUrl = match.groupValues[1]
+                        if (vidUrl.contains(".m3u8") || vidUrl.contains(".mp4")) {
+                            callback(
+                                newExtractorLink(
+                                    source = name,
+                                    name = name,
+                                    url = vidUrl,
+                                ) {
+                                    this.referer = referer
+                                    this.quality = Qualities.Unknown.value
+                                }
+                            )
+                        } else if (vidUrl.contains("octopusmanifest") || vidUrl.contains("anpustream")) {
+                            callback(
+                                newExtractorLink(
+                                    source = name,
+                                    name = "Octopus/Anpu",
+                                    url = "$vidUrl#.m3u8",
+                                ) {
+                                    this.referer = referer
+                                    this.quality = Qualities.Unknown.value
+                                }
+                            )
+                        } else {
+                            loadExtractor(vidUrl, referer, { }, callback)
+                        }
+                    }
+                    return true
+                }
+            }
+        } catch (e: Exception) {
+            // Log error but continue to fallback
+            e.printStackTrace()
+        }
+        return false
     }
 }
