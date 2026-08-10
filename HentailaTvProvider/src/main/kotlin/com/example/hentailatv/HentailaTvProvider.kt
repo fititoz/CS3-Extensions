@@ -192,7 +192,7 @@ class HentailaTvProvider : MainAPI() {
         return true
     }
 
-    private fun decodeAndProcessPlayerData(
+    private suspend fun decodeAndProcessPlayerData(
         encodedData: String,
         referer: String,
         callback: (ExtractorLink) -> Unit
