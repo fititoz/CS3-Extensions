@@ -119,8 +119,9 @@ class HentailaTvProvider : MainAPI() {
         if (playerIframe != null) {
             val playerUrl = playerIframe.attr("src")
             if (playerUrl != null && playerUrl.contains("data=")) {
-                val encodedData = playerUrl.substringAfter("data=")
-                if (decodeAndProcessPlayerData(encodedData, data, callback)) {
+                // Extract data parameter value properly (stop at & or end of string)
+                val encodedData = Regex("""data=([^&]+)""").find(playerUrl)?.groupValues?.get(1)
+                if (encodedData != null && decodeAndProcessPlayerData(encodedData, data, callback)) {
                     return true
                 }
             }
