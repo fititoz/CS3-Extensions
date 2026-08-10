@@ -28,7 +28,7 @@ class UnderHentaiProvider : MainAPI() {
         val href = fixUrl(anchor.attr("href"))
         val img = this.selectFirst("img")
         val poster = img?.attr("src")?.ifEmpty { img.attr("srcset").substringBefore(" ") }?.ifEmpty { img.attr("data-src") }
-        
+
         return newAnimeSearchResponse(title, href) {
             this.posterUrl = poster?.let { fixUrl(it) }
         }
@@ -68,37 +68,41 @@ class UnderHentaiProvider : MainAPI() {
 
         val episodes = ArrayList<Episode>()
 
+        // Cada .ep-box = un episodio (Episode 01, Episode 02, etc.)
         val epBoxes = doc.select(".ep-box")
         for (box in epBoxes) {
-            val epName = box.selectFirst(".ep-header")?.text()?.trim() ?: "Episode"
-            
-            val links = box.select("a.actions-value[href*='/watch/']")
-            for (a in links) {
+            // Número de episodio desde el header: "Episode 01" -> 1
+            val epHeaderText = box.selectFirst(".ep-header")?.text()?.trim() ?: "Episode"
+            val epNum = Regex("\\d+").find(epHeaderText)?.value?.toIntOrNull() ?: 0
+
+            // Cada variante (Raw, Subbed ENG, Subbed ESP) tiene su propio link "Watch"
+            val watchLinks = box.select("a.actions-value[href*='/watch/']")
+
+            for (a in watchLinks) {
                 val href = fixUrl(a.attr("href"))
-                val epParam = Regex("""ep=(\d+)""").find(href)?.groupValues?.get(1)?.toIntOrNull()
-                
+
+                // Detectar subtítulos desde .variant-meta (hermano anterior de .variant-actions)
                 val actions = a.closest(".variant-actions")
                 val meta = actions?.previousElementSibling()
-                
+
                 val subsItem = meta?.select(".meta-item")?.find { it.text().contains("Subs", ignoreCase = true) }
                 val subsValue = subsItem?.selectFirst(".meta-value, span")?.text()?.trim() ?: ""
-                
+
                 val subLabel = when {
                     subsValue.contains("English", ignoreCase = true) -> "SUB ENG"
                     subsValue.contains("Spanish", ignoreCase = true) -> "SUB ESP"
                     subsValue.contains("None", ignoreCase = true) || subsValue.isEmpty() -> "RAW"
                     else -> "SUB ${subsValue.uppercase().take(3)}"
                 }
-                
-                val finalName = "$epName [$subLabel]"
-                
+
+                val finalName = "$epHeaderText [$subLabel]"
+
+                // Evitar duplicados por href
                 if (episodes.none { it.data == href }) {
                     episodes.add(
                         newEpisode(href) {
                             this.name = finalName
-                            if (epParam != null) {
-                                this.episode = epParam
-                            }
+                            this.episode = epNum  // USAR epNum del header, NO epParam de URL
                         }
                     )
                 }
@@ -121,29 +125,24 @@ class UnderHentaiProvider : MainAPI() {
     ): Boolean {
         val doc = app.get(data, referer = mainUrl).document
 
-        // 1. Direct iframes
+        // 1. Buscar iframe en el tabpanel activo (ZoPlayer, LuluStream, KrakenFiles, etc.)
+        // Estructura: <div class="tabpanel"> <iframe src="..."> </div>
+        doc.select("div.tabpanel iframe").forEach { iframe ->
+            val src = iframe.attr("src").ifEmpty { iframe.attr("data-src") }
+            if (src.isNotBlank() && src.startsWith("http")) {
+                loadExtractor(fixUrl(src), data, subtitleCallback, callback)
+            }
+        }
+
+        // 2. Fallback: buscar CUALQUIER iframe en la página (por si cambian la estructura)
         doc.select("iframe").forEach { iframe ->
             val src = iframe.attr("src").ifEmpty { iframe.attr("data-src") }
-            if (src.isNotEmpty() && !src.startsWith("about:")) {
-                loadExtractor(fixUrl(src), mainUrl, subtitleCallback, callback)
+            if (src.isNotBlank() && src.startsWith("http") && !src.contains("underhentai.net")) {
+                loadExtractor(fixUrl(src), data, subtitleCallback, callback)
             }
         }
 
-        // 2. Iframes in scripts (lazy-loaded via JS)
-        doc.select("script").forEach { script ->
-            val scriptData = script.data()
-            if (scriptData.contains("iframe") || scriptData.contains("src=") || scriptData.contains("data-src=")) {
-                val iframeRegex = Regex("""(?:data-src|src|url)\s*[=:]\s*\\?['"]([^'"\\]+)\\?['"]""")
-                iframeRegex.findAll(scriptData).forEach { match ->
-                    val url = match.groupValues[1]
-                    if (url.startsWith("http") && !url.contains("underhentai.net")) {
-                        loadExtractor(url, mainUrl, subtitleCallback, callback)
-                    }
-                }
-            }
-        }
-
-        // 3. Look for direct video URLs (mp4, m3u8)
+        // 3. Fallback: scripts con URLs de video directas (mp4, m3u8)
         doc.select("script").forEach { script ->
             val scriptData = script.data()
             val videoRegex = Regex("""(https?://[^'"]+\.(?:mp4|m3u8)[^'"]*)""")
@@ -155,7 +154,7 @@ class UnderHentaiProvider : MainAPI() {
                         name = name,
                         url = videoUrl,
                     ) {
-                        this.referer = mainUrl
+                        this.referer = data
                         this.quality = Qualities.Unknown.value
                     }
                 )
