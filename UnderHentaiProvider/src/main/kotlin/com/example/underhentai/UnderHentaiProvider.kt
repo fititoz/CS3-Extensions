@@ -72,7 +72,10 @@ class UnderHentaiProvider : MainAPI() {
         val epBoxes = doc.select(".ep-box")
         for (box in epBoxes) {
             // Número de episodio desde el header: "Episode 01" -> 1
-            val epHeaderText = box.selectFirst(".ep-header")?.text()?.trim() ?: "Episode"
+            // El texto está en .ep-header pero puede tener whitespace/newlines
+            val epHeaderText = box.selectFirst(".ep-header")?.text()?.trim()
+                ?: box.selectFirst(":contains(Episode)")?.text()?.trim()
+                ?: "Episode"
             val epNum = Regex("\\d+").find(epHeaderText)?.value?.toIntOrNull() ?: 0
 
             // Cada variante (Raw, Subbed ENG, Subbed ESP) tiene su propio link "Watch"
@@ -82,8 +85,11 @@ class UnderHentaiProvider : MainAPI() {
                 val href = fixUrl(a.attr("href"))
 
                 // Detectar subtítulos desde .variant-meta (hermano anterior de .variant-actions)
+                // Estructura: .variant-header -> .variant-meta -> .variant-actions -> .variant-header...
+                // actions.previousElementSibling() devuelve el .variant-header SIGUIENTE
+                // Necesitamos ir dos hermanos atrás para llegar a .variant-meta
                 val actions = a.closest(".variant-actions")
-                val meta = actions?.previousElementSibling()
+                val meta = actions?.previousElementSibling()?.previousElementSibling()
 
                 val subsItem = meta?.select(".meta-item")?.find { it.text().contains("Subs", ignoreCase = true) }
                 val subsValue = subsItem?.selectFirst(".meta-value, span")?.text()?.trim() ?: ""
